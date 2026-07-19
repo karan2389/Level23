@@ -22,6 +22,30 @@ function Material({ active, color, opacity = 1 }: { active: boolean; color: stri
   );
 }
 
+function PalmTree({ position }: { position: [number, number, number] }) {
+  return (
+    <group position={position}>
+      {/* Trunk */}
+      <mesh castShadow>
+        <cylinderGeometry args={[0.02, 0.04, 0.5, 6]} />
+        <meshStandardMaterial color="#6a5849" roughness={0.88} />
+      </mesh>
+      {/* Leaves */}
+      <group position={[0, 0.23, 0]}>
+        {Array.from({ length: 5 }).map((_, i) => {
+          const angle = (i * Math.PI * 2) / 5;
+          return (
+            <mesh key={i} rotation={[0.2, angle, 0.1]}>
+              <boxGeometry args={[0.3, 0.01, 0.07]} />
+              <meshStandardMaterial color="#4f6c44" roughness={0.85} />
+            </mesh>
+          );
+        })}
+      </group>
+    </group>
+  );
+}
+
 function Building({ selected, nudge, paused }: { selected: FloorGroupId; nudge: number; paused: boolean }) {
   const group = useRef<THREE.Group>(null);
   const targetRotation = useRef(-0.42);
@@ -49,14 +73,37 @@ function Building({ selected, nudge, paused }: { selected: FloorGroupId; nudge: 
         <boxGeometry args={[5.8, 0.7, 4.35]} />
         <Material active={selected === "ground"} color="#dad5ce" />
       </mesh>
+      {/* Ground Floor columns */}
+      {[-2.8, -1.9, -1.0, 0.0, 1.0, 1.9, 2.8].map((x) => (
+        <mesh key={`col-${x}`} position={[x, 0.35, 2.18]} castShadow>
+          <boxGeometry args={[0.12, 0.71, 0.08]} />
+          <meshStandardMaterial color="#c0b9af" roughness={0.6} />
+        </mesh>
+      ))}
+
       <mesh position={[0, 1.08, 0]} castShadow receiveShadow>
         <boxGeometry args={[5.45, 0.68, 4.05]} />
         <Material active={selected === "first"} color="#cbd0d2" />
       </mesh>
+
       <mesh position={[0, 2.48, 0]} castShadow receiveShadow>
         <boxGeometry args={[5.45, 2.08, 4.05]} />
         <Material active={selected === "parking"} color="#b9bcbd" />
       </mesh>
+      {/* Parking Grilles / Louvers */}
+      {[1.6, 1.9, 2.2, 2.5, 2.8, 3.1, 3.4].map((y) => (
+        <group key={y}>
+          <mesh position={[0, y, 2.035]} castShadow>
+            <boxGeometry args={[5.47, 0.04, 0.02]} />
+            <meshStandardMaterial color="#302f2e" metalness={0.5} roughness={0.5} />
+          </mesh>
+          <mesh position={[-2.735, y, 0]} castShadow>
+            <boxGeometry args={[0.02, 0.04, 4.07]} />
+            <meshStandardMaterial color="#302f2e" metalness={0.5} roughness={0.5} />
+          </mesh>
+        </group>
+      ))}
+
       <mesh position={[0, 3.91, 0]} castShadow receiveShadow>
         <boxGeometry args={[5.35, 0.7, 3.98]} />
         <Material active={selected === "amenities"} color="#ddd6ca" />
@@ -79,13 +126,14 @@ function Building({ selected, nudge, paused }: { selected: FloorGroupId; nudge: 
         </mesh>
       ))}
 
-      {fins.map((x) => (
+      {/* vertical fins filtered to skip left-front corner for glazed effect */}
+      {fins.filter((x) => x > -1.1).map((x) => (
         <mesh key={`front-${x}`} position={[x, 8.51, 1.66]} castShadow>
           <boxGeometry args={[0.052, 8.86, 0.13]} />
           <meshStandardMaterial color="#e3e9ec" metalness={0.6} roughness={0.24} />
         </mesh>
       ))}
-      {sideFins.map((z) => (
+      {sideFins.filter((z) => z < 0.2).map((z) => (
         <mesh key={`side-${z}`} position={[-2.73, 8.51, z]} castShadow>
           <boxGeometry args={[0.13, 8.86, 0.052]} />
           <meshStandardMaterial color="#e3e9ec" metalness={0.6} roughness={0.24} />
@@ -115,6 +163,16 @@ function Building({ selected, nudge, paused }: { selected: FloorGroupId; nudge: 
           </mesh>
         </group>
       ))}
+
+      {/* Ledge Palm Trees */}
+      <PalmTree position={[2.3, 4.3, 1.5]} />
+      <PalmTree position={[2.3, 4.3, 0.7]} />
+      <PalmTree position={[2.3, 4.3, -0.1]} />
+      <PalmTree position={[2.3, 4.3, -0.9]} />
+      <PalmTree position={[1.4, 4.3, 1.8]} />
+      <PalmTree position={[0.5, 4.3, 1.8]} />
+      <PalmTree position={[-0.4, 4.3, 1.8]} />
+      <PalmTree position={[-1.3, 4.3, 1.8]} />
 
       <mesh position={[0, -0.15, 0]} receiveShadow>
         <cylinderGeometry args={[4.6, 5.0, 0.22, 72]} />
