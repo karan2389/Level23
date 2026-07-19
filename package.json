@@ -1,0 +1,37 @@
+{
+  "name": "level23-interactive-portfolio",
+  "version": "2.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "preview": "npx serve out -l 4173",
+    "lint": "eslint .",
+    "netlify-build": "next build",
+    "check": "npm run lint && npm run build"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.7.7",
+    "@react-three/fiber": "9.6.1",
+    "gsap": "3.15.0",
+    "lucide-react": "0.468.0",
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2",
+    "@types/three": "0.176.0",
+    "eslint": "9.25.1",
+    "eslint-config-next": "16.2.10",
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=20.9.0 <23",
+    "npm": ">=10"
+  }
+}
