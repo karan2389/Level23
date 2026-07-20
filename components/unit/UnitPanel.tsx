@@ -105,7 +105,7 @@ export function UnitPanel({
 
         {/* Facts grid */}
         <div className="office-popup-facts">
-          <article><Maximize2 /><div><small>Reference Area</small><strong>{selectedOffice.area} sq ft</strong></div></article>
+          <article><Maximize2 /><div><small>Carpet Area</small><strong>{selectedOffice.carpetArea}</strong></div></article>
           <article><Route /><div><small>Facing</small><strong>{selectedOffice.facing}</strong></div></article>
           <article><Building2 /><div><small>Dimensions</small><strong>{selectedOffice.dimensions}</strong></div></article>
           <article><Info /><div><small>Compass</small><strong>{selectedOffice.facing === "Window-facing" ? "North wing" : "South wing"}</strong></div></article>

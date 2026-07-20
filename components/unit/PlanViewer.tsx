@@ -127,6 +127,35 @@ export function PlanViewer({
               </div>
             </PanZoomViewport>
           )}
+          {/* Relocated action bar directly beneath the floor plan viewport, inside the card */}
+          {multiSelectMode && activePlan === "offices" && (
+            <div className="multi-select-toolbar-relocated" role="toolbar" aria-label="Multi-office selection controls">
+              <div className="multi-select-toolbar-count">
+                <Layers size={20} aria-hidden="true" />
+                <span>
+                  <strong>{multiSelectedOffices.length}</strong>{" "}
+                  {multiSelectedOffices.length === 1 ? "Office" : "Offices"} Selected
+                </span>
+              </div>
+              <div className="multi-select-toolbar-actions">
+                <button
+                  type="button"
+                  className="multi-select-cancel-btn"
+                  onClick={onCancelMultiSelect}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="multi-select-done-btn"
+                  onClick={onDoneMultiSelect}
+                  disabled={multiSelectedOffices.length === 0}
+                >
+                  Done – Show selected
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="plan-legend">
             <span><i className="office-color" /> Office</span>
@@ -136,45 +165,19 @@ export function PlanViewer({
         </div>
 
         {activePlan === "offices" ? (
-          <div className="plan-information reveal office-tap-instruction">
-            <span>Drag to pan · pinch or scroll to zoom · double tap to reset</span>
-          </div>
+          !multiSelectMode && (
+            <div className="plan-information reveal office-tap-instruction">
+              <Layers size={19} />
+              <span>Pinch to zoom, drag to pan, then tap any office block to open its details.</span>
+            </div>
+          )
         ) : (
           <div className="plan-information reveal">
+            <Layers size={19} />
             <span>{activePlanData.description} Individual unit interaction is enabled for the typical office floors in this demo.</span>
           </div>
         )}
       </div>
-
-      {/* Sticky bottom toolbar — shown in multi-select mode */}
-      {multiSelectMode && activePlan === "offices" && (
-        <div className="multi-select-toolbar" role="toolbar" aria-label="Multi-office selection controls">
-          <div className="multi-select-toolbar-count">
-            <Layers size={20} aria-hidden="true" />
-            <span>
-              <strong>{multiSelectedOffices.length}</strong>{" "}
-              {multiSelectedOffices.length === 1 ? "Office" : "Offices"} Selected
-            </span>
-          </div>
-          <div className="multi-select-toolbar-actions">
-            <button
-              type="button"
-              className="multi-select-cancel-btn"
-              onClick={onCancelMultiSelect}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="multi-select-done-btn"
-              onClick={onDoneMultiSelect}
-              disabled={multiSelectedOffices.length === 0}
-            >
-              Done – Show selected <Check size={16} />
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

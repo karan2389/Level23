@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Maximize2, FileText, Download, ArrowRight, X, Layers, Compass } from "lucide-react";
+import { FileText, Download, ArrowRight, X, Layers, Compass } from "lucide-react";
 import type { Office } from "@/types/unit";
 
 // Parse the frontage value (feet part) from a dimensions string like "15'5\" × 47'9\""
@@ -56,13 +56,12 @@ export function MultiOfficeSummary({
   const count = selectedOffices.length;
 
   const totals = useMemo(() => {
-    const totalRefArea = selectedOffices.reduce((sum, o) => sum + o.area, 0);
     const totalCarpetArea = selectedOffices.reduce((sum, o) => sum + o.carpetArea, 0);
     const combinedDimensions = buildCombinedDimensions(selectedOffices);
     const uniqueFacings = [...new Set(selectedOffices.map((o) => o.facing))];
     const uniqueWings = [...new Set(uniqueFacings.map(wingFromFacing))];
     const compass = uniqueWings.length === 1 ? uniqueWings[0] : uniqueWings.join(" & ");
-    return { totalRefArea, totalCarpetArea, combinedDimensions, compass };
+    return { totalCarpetArea, combinedDimensions, compass };
   }, [selectedOffices]);
 
   return (
@@ -82,30 +81,24 @@ export function MultiOfficeSummary({
         <header className="office-popup-header">
           <span>Selected Office Collection · Typical Floors 7–22{selectedFloorNumber ? ` · Floor ${selectedFloorNumber}` : ""}</span>
           <h2 id="summary-popup-title">{count} Selected {count === 1 ? "Office" : "Offices"}</h2>
-          <p>Review every selected unit and the combined reference information.</p>
+          <p>Review every selected unit and the combined information.</p>
         </header>
 
-        {/* Office cards */}
+        {/* Office cards (concise text-only layout) */}
         {count === 0 ? (
           <p className="summary-empty">No offices selected. Go back and select some units.</p>
         ) : (
           <div className={`summary-office-cards ${count === 1 ? "summary-cards-one" : count === 2 ? "summary-cards-two" : ""}`}>
             {selectedOffices.map((office) => (
-              <div key={office.id} className="summary-office-card">
-                <div
-                  className="summary-office-crop"
-                  style={{
-                    backgroundImage: 'url("/images/plans/typical-plan.webp")',
-                    backgroundSize: `${10000 / office.w}% ${10000 / office.h}%`,
-                    backgroundPosition: `${office.x / (100 - office.w) * 100}% ${office.y / (100 - office.h) * 100}%`,
-                  }}
-                  aria-label={`Office ${String(office.id).padStart(2, "0")} thumbnail`}
-                >
-                  <span className="summary-office-badge">Office {String(office.id).padStart(2, "0")}</span>
+              <div key={office.id} className="summary-office-card text-only">
+                <div className="summary-card-title">Office {String(office.id).padStart(2, "0")}</div>
+                <div className="summary-card-row">
+                  <span className="summary-card-label">Carpet Area</span>
+                  <span className="summary-card-value">{office.carpetArea}</span>
                 </div>
-                <div className="summary-office-info">
-                  <strong>Office {String(office.id).padStart(2, "0")}</strong>
-                  <span>{office.area} sq ft · {wingFromFacing(office.facing)}</span>
+                <div className="summary-card-row">
+                  <span className="summary-card-label">Wing</span>
+                  <span className="summary-card-value">{wingFromFacing(office.facing)}</span>
                 </div>
               </div>
             ))}
@@ -122,20 +115,13 @@ export function MultiOfficeSummary({
           <ArrowRight size={18} className="office-select-more-arrow" />
         </button>
 
-        {/* Combined stats */}
+        {/* Combined stats (exactly 3 cards: Carpet Area, Combined Dimensions, Compass) */}
         <div className="office-popup-facts summary-stats-grid">
-          <article>
-            <Maximize2 />
-            <div>
-              <small>Total Reference Area</small>
-              <strong>{totals.totalRefArea.toLocaleString()} sq ft</strong>
-            </div>
-          </article>
           <article>
             <FileText />
             <div>
               <small>Total Carpet Area</small>
-              <strong>{totals.totalCarpetArea.toFixed(2)} sq ft</strong>
+              <strong>{totals.totalCarpetArea.toFixed(2)}</strong>
             </div>
           </article>
           <article>
