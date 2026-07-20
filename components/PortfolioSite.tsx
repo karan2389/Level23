@@ -9,6 +9,7 @@ import { InteriorsSection } from "@/components/interiors/InteriorsSection";
 import { LocationSection } from "@/components/contact/LocationSection";
 import { NavigationMenu } from "@/components/navigation/NavigationMenu";
 import { UnitPanel } from "@/components/unit/UnitPanel";
+import { MultiOfficeSummary } from "@/components/unit/MultiOfficeSummary";
 import { NoticeModal } from "@/components/common/NoticeModal";
 import { initScrollAnimations } from "@/animations/scroll";
 import { offices } from "@/data/units";
@@ -34,6 +35,12 @@ export default function PortfolioSite() {
   const [selectedOffice, setSelectedOffice] = useState<Office>(() => offices.find((office) => office.id === 1) ?? offices[0]);
   const [officePopupOpen, setOfficePopupOpen] = useState(false);
 
+  // State for Multi-Office Selection Workflow
+  const [selectedFloorNumber, setSelectedFloorNumber] = useState<number | null>(null);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [multiSelectedOffices, setMultiSelectedOffices] = useState<Office[]>([]);
+  const [summaryPopupOpen, setSummaryPopupOpen] = useState(false);
+
   useEffect(() => {
     const ctx = initScrollAnimations(root);
     return () => ctx.revert();
@@ -41,6 +48,46 @@ export default function PortfolioSite() {
 
   const openPlan = () => {
     setActivePlan(selectedFloor);
+    window.setTimeout(() => scrollToId("floor-plan"), 40);
+  };
+
+  // Handler: "Select more office units" clicked in UnitPanel
+  const handleOpenMultiSelect = (floorNumber: number) => {
+    // Pre-select the current office
+    setMultiSelectedOffices([selectedOffice]);
+    setOfficePopupOpen(false);
+    setMultiSelectMode(true);
+    setActivePlan("offices");
+    setSelectedFloorNumber(floorNumber);
+    window.setTimeout(() => scrollToId("floor-plan"), 40);
+  };
+
+  // Handler: toggle an office in multi-select
+  const handleToggleOffice = (office: Office) => {
+    setMultiSelectedOffices((prev) => {
+      const exists = prev.some((o) => o.id === office.id);
+      if (exists) return prev.filter((o) => o.id !== office.id);
+      return [...prev, office];
+    });
+  };
+
+  // Handler: Cancel multi-select → restore single office popup
+  const handleCancelMultiSelect = () => {
+    setMultiSelectedOffices([]);
+    setMultiSelectMode(false);
+    setOfficePopupOpen(true);
+  };
+
+  // Handler: Done in multi-select toolbar → show summary
+  const handleDoneMultiSelect = () => {
+    setMultiSelectMode(false);
+    setSummaryPopupOpen(true);
+  };
+
+  // Handler: "Select more office units" in summary → return to multi-select
+  const handleSelectMoreFromSummary = () => {
+    setSummaryPopupOpen(false);
+    setMultiSelectMode(true);
     window.setTimeout(() => scrollToId("floor-plan"), 40);
   };
 
@@ -62,7 +109,12 @@ export default function PortfolioSite() {
         scrollToId={scrollToId} 
         selectedOffice={selectedOffice} 
         setSelectedOffice={setSelectedOffice} 
-        setOfficePopupOpen={setOfficePopupOpen} 
+        setOfficePopupOpen={setOfficePopupOpen}
+        multiSelectMode={multiSelectMode}
+        multiSelectedOffices={multiSelectedOffices}
+        onToggleOffice={handleToggleOffice}
+        onCancelMultiSelect={handleCancelMultiSelect}
+        onDoneMultiSelect={handleDoneMultiSelect}
       />
 
       <InteriorsSection />
@@ -77,7 +129,20 @@ export default function PortfolioSite() {
         <UnitPanel 
           selectedOffice={selectedOffice} 
           onClose={() => setOfficePopupOpen(false)} 
-          onEnquire={() => setNoticeOpen(true)} 
+          onEnquire={() => setNoticeOpen(true)}
+          selectedFloorNumber={selectedFloorNumber}
+          onFloorChange={setSelectedFloorNumber}
+          onSelectMore={handleOpenMultiSelect}
+        />
+      )}
+
+      {summaryPopupOpen && (
+        <MultiOfficeSummary
+          selectedOffices={multiSelectedOffices}
+          selectedFloorNumber={selectedFloorNumber}
+          onClose={() => setSummaryPopupOpen(false)}
+          onEnquire={() => setNoticeOpen(true)}
+          onSelectMore={handleSelectMoreFromSummary}
         />
       )}
 

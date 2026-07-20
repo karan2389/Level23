@@ -466,3 +466,282 @@ main { overflow: hidden; }
   .office-popup-actions { grid-template-columns: 1fr; }
 }
 .model-interaction-surface { width: 100%; height: 100%; touch-action: none; overscroll-behavior: contain; }
+
+/* ─── Brand logo images ─────────────────────────────── */
+.brand-logo { object-fit: contain; display: block; height: clamp(22px, 3.5vw, 38px); width: auto; }
+.level-mark { display: flex; align-items: center; justify-content: center; }
+.level-mark-logo { object-fit: contain; height: clamp(44px, 6vw, 72px); width: auto; display: block; }
+
+/* ─── Select floor + Select more section ─────────────── */
+.office-select-more-section { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.office-floor-select-row { display: flex; gap: 10px; align-items: flex-start; }
+.office-floor-select-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.office-floor-select {
+  appearance: none;
+  width: 100%;
+  height: 52px;
+  padding: 0 42px 0 16px;
+  border: 1.5px solid rgba(230,125,76,0.45);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.72) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c96035' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 14px center;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.office-floor-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(230,125,76,0.15); }
+.office-floor-select.error { border-color: var(--accent); border-width: 2px; box-shadow: 0 0 0 3px rgba(230,125,76,0.12); animation: shakeInput 0.32s ease; }
+@keyframes shakeInput { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+.office-floor-error { display: flex; align-items: center; gap: 5px; color: var(--accent-dark); font-size: 0.76rem; }
+
+.office-select-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1.5px solid rgba(230,125,76,0.45);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.56);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.office-select-more-btn:hover { border-color: var(--accent); background: rgba(255,255,255,0.84); transform: translateY(-1px); }
+.office-select-more-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(230,125,76,0.12); display: grid; place-items: center; color: var(--accent); flex: 0 0 auto; }
+.office-select-more-text { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.office-select-more-text strong { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+.office-select-more-text small { font-size: 0.78rem; color: var(--muted); }
+.office-select-more-arrow { color: var(--accent); flex: 0 0 auto; }
+
+/* ─── Price row with Cost Sheet button ───────────────── */
+.office-popup-price-row { display: flex; align-items: stretch; gap: 12px; margin-top: 12px; }
+.office-popup-price-row .office-popup-price { flex: 1; margin-top: 0; }
+.cost-sheet-btn {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100px;
+  min-height: 88px;
+  border: 1.5px solid var(--accent);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.8);
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.cost-sheet-btn:hover { background: rgba(230,125,76,0.08); transform: translateY(-1px); }
+
+/* ─── View Cost Sheet button ──────────────────────────── */
+.view-cost-sheet-btn {
+  margin-top: 8px;
+  width: 100%;
+  min-height: 50px;
+  font-size: 0.9rem;
+  gap: 10px;
+  border-radius: 13px;
+}
+
+/* ─── Multi-select instruction banner ────────────────── */
+.multi-select-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: linear-gradient(110deg, #d66b3e, #eb8a56);
+  color: white;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  box-shadow: 0 8px 24px rgba(209,92,43,0.22);
+  animation: bannerSlideIn 0.24s ease-out both;
+}
+@keyframes bannerSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.multi-select-banner > svg { flex: 0 0 auto; }
+.multi-select-banner > span { flex: 1; }
+.multi-select-banner-close {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.18);
+  color: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+/* ─── Office hotspot multi-selected state ────────────── */
+.office-hotspot.multi-selected {
+  border: 2px solid var(--accent);
+  background: rgba(230,125,76,0.28);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.72), 0 0 28px rgba(230,125,76,0.3);
+}
+.office-hotspot-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px rgba(94,67,47,0.22);
+}
+
+/* ─── Sticky multi-select toolbar ────────────────────── */
+.multi-select-toolbar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 130;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px clamp(16px, 4vw, 32px);
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+  background: rgba(248,243,237,0.96);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 32px rgba(91,66,48,0.1);
+  animation: toolbarSlideUp 0.26s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes toolbarSlideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+.multi-select-toolbar-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+.multi-select-toolbar-count svg { color: var(--accent); }
+.multi-select-toolbar-count strong { font-size: 1.05rem; }
+.multi-select-toolbar-actions { display: flex; align-items: center; gap: 10px; }
+.multi-select-cancel-btn {
+  height: 48px;
+  padding: 0 22px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.8);
+  color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+  min-width: 80px;
+}
+.multi-select-cancel-btn:hover { background: white; color: var(--ink); }
+.multi-select-done-btn {
+  height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(110deg, #dd7043, #ed8d59);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 22px rgba(219,103,56,0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+.multi-select-done-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(219,103,56,0.3); }
+.multi-select-done-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ─── Multi-office summary popup ─────────────────────── */
+.summary-popup { width: min(100%, 920px); }
+.summary-office-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+}
+.summary-cards-one { grid-template-columns: 1fr; max-width: 280px; }
+.summary-cards-two { grid-template-columns: repeat(2, 1fr); }
+.summary-office-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.58);
+  transition: transform 0.2s ease;
+}
+.summary-office-card:hover { transform: translateY(-2px); }
+.summary-office-crop {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-repeat: no-repeat;
+  background-color: #fff;
+  overflow: hidden;
+}
+.summary-office-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+.summary-office-info { padding: 10px 14px 14px; }
+.summary-office-info strong { display: block; font-size: 0.95rem; font-weight: 500; margin-bottom: 3px; }
+.summary-office-info span { font-size: 0.78rem; color: var(--muted); }
+.summary-select-more { margin: 16px 0 0; }
+.summary-stats-grid { margin-top: 14px; }
+.summary-empty { color: var(--muted); text-align: center; padding: 32px 0; }
+
+/* ─── Responsive overrides for new elements ──────────── */
+@media (max-width: 900px) {
+  .summary-office-cards { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cost-sheet-btn { width: 88px; font-size: 0.72rem; }
+}
+
+@media (max-width: 640px) {
+  /* Brand logos */
+  .brand-logo { height: clamp(18px, 5vw, 28px); }
+  .level-mark-logo { height: clamp(36px, 8vw, 52px); }
+
+  /* Floor select + CTA */
+  .office-floor-select-row { flex-direction: column; }
+  .office-floor-select { height: 48px; font-size: 0.88rem; }
+  .office-select-more-btn { padding: 13px 14px; }
+  .office-select-more-icon { width: 36px; height: 36px; }
+
+  /* Price row */
+  .office-popup-price-row { flex-direction: column; }
+  .cost-sheet-btn { flex-direction: row; width: 100%; height: 52px; min-height: auto; gap: 10px; }
+
+  /* View Cost Sheet */
+  .view-cost-sheet-btn { min-height: 48px; }
+
+  /* Summary */
+  .summary-office-cards, .summary-cards-two { grid-template-columns: 1fr; }
+  .summary-cards-one { max-width: 100%; }
+  .summary-popup .office-popup-facts { grid-template-columns: 1fr; }
+
+  /* Toolbar */
+  .multi-select-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .multi-select-toolbar-count { justify-content: center; }
+  .multi-select-toolbar-actions { flex-direction: column; gap: 8px; }
+  .multi-select-cancel-btn, .multi-select-done-btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .summary-office-cards { grid-template-columns: 1fr; }
+}
+
