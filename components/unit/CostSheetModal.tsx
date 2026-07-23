@@ -41,7 +41,7 @@ export function CostSheetModal({
       const element = document.getElementById("printable-cost-sheet");
       if (!element) return;
 
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#1e1e1e" });
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#faf7f2" });
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF("p", "mm", "a4");
@@ -129,13 +129,13 @@ export function CostSheetModal({
           <p style={{ opacity: 0.8 }}>{selectedOffices.length} Selected Units · {floorText}</p>
         </header>
 
-        {/* Printable Area */}
-        <div id="printable-cost-sheet" className="cost-sheet-content">
+        {/* Printable Area - Light Theme with Dark Numbers */}
+        <div id="printable-cost-sheet" className="cost-sheet-content" style={{ backgroundColor: "#faf7f2", color: "#111111", padding: "1.25rem", borderRadius: "12px" }}>
           {/* Office Units Table */}
           <div style={{ overflowX: "auto", marginBottom: "1.5rem" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem", color: "#000000" }}>
               <thead>
-                <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)", color: "rgba(0, 0, 0, 0.7)" }}>
+                <tr style={{ borderBottom: "2px solid rgba(0,0,0,0.15)", color: "#333333" }}>
                   <th style={{ padding: "0.75rem" }}>Unit No</th>
                   <th style={{ padding: "0.75rem" }}>Area</th>
                   <th style={{ padding: "0.75rem" }}>Rate</th>
@@ -145,12 +145,12 @@ export function CostSheetModal({
               </thead>
               <tbody>
                 {summary.items.map((item) => (
-                  <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <td style={{ padding: "0.75rem", fontWeight: 600 }}>{item.unitNo}</td>
-                    <td style={{ padding: "0.75rem" }}>{item.area} sq.ft</td>
-                    <td style={{ padding: "0.75rem" }}>{formatCurrency(item.rate)}</td>
-                    <td style={{ padding: "0.75rem" }}>{formatCurrency(item.floorRise)}</td>
-                    <td style={{ padding: "0.75rem", textAlign: "right", fontWeight: 600 }}>
+                  <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", color: "#000000" }}>
+                    <td style={{ padding: "0.75rem", fontWeight: 700, color: "#000000" }}>{item.unitNo}</td>
+                    <td style={{ padding: "0.75rem", color: "#222222" }}>{item.area} sq.ft</td>
+                    <td style={{ padding: "0.75rem", color: "#000000", fontWeight: 600 }}>{formatCurrency(item.rate)}</td>
+                    <td style={{ padding: "0.75rem", color: "#000000" }}>{formatCurrency(item.floorRise)}</td>
+                    <td style={{ padding: "0.75rem", textAlign: "right", fontWeight: 700, color: "#000000" }}>
                       {formatCurrency(item.totalSubtotal)}
                     </td>
                   </tr>
@@ -160,57 +160,58 @@ export function CostSheetModal({
           </div>
 
           {/* Detailed Calculations Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem", backgroundColor: "rgba(255,255,255,0.03)", padding: "1.25rem", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)", marginBottom: "1.5rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem", backgroundColor: "#f2ece4", padding: "1.25rem", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", marginBottom: "1.5rem" }}>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", display: "block" }}>Combined Carpet Area</span>
-              <strong style={{ fontSize: "1.1rem" }}>{summary.totalArea.toFixed(2)} sq.ft</strong>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Combined Carpet Area</span>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{summary.totalArea.toFixed(2)} sq.ft</strong>
             </div>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", display: "block" }}>Basic Cost</span>
-              <strong style={{ fontSize: "1.1rem" }}>{formatCurrency(summary.totalBasicCost)}</strong>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Basic Cost</span>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{formatCurrency(summary.totalBasicCost)}</strong>
             </div>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", display: "block" }}>Total Floor Rise</span>
-              <strong style={{ fontSize: "1.1rem" }}>{formatCurrency(summary.totalFloorRise)}</strong>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Total Floor Rise</span>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{formatCurrency(summary.totalFloorRise)}</strong>
             </div>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", display: "block" }}>Dev & Amenities</span>
-              <strong style={{ fontSize: "1.1rem" }}>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Dev & Amenities</span>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>
                 {formatCurrency(summary.totalDevelopment + summary.totalDgBackup + summary.totalRecreational)}
               </strong>
             </div>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", display: "block" }}>Legal & Society Form.</span>
-              <strong style={{ fontSize: "1.1rem" }}>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Legal & Society Form.</span>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight 700 }}>
                 {formatCurrency(summary.totalLegal + summary.totalSocietyFormation)}
               </strong>
             </div>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.6)", display: "block" }}>Other Charges</span>
-              <strong style={{ fontSize: "1.1rem" }}>{formatCurrency(summary.totalOtherCharges)}</strong>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Other Charges</span>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{formatCurrency(summary.totalOtherCharges)}</strong>
             </div>
           </div>
 
           {/* Grand Totals Summary Card */}
-          <div style={{ padding: "1.25rem", borderRadius: "12px", background: "linear-gradient(135deg, rgba(201,160,99,0.15), rgba(201,160,99,0.05))", border: "1px solid rgba(201,160,99,0.3)", marginBottom: "1.5rem" }}>
+          <div style={{ padding: "1.25rem", borderRadius: "12px", background: "linear-gradient(135deg, rgba(201,160,99,0.25), rgba(201,160,99,0.1))", border: "1px solid rgba(201,160,99,0.4)", marginBottom: "1.5rem", color: "#000000" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <span style={{ opacity: 0.8 }}>Total Agreement Value</span>
-              <strong>{formatCurrency(summary.totalSubtotal)}</strong>
+              <span style={{ color: "#333333", fontWeight: 500 }}>Total Agreement Value</span>
+              <strong style={{ color: "#000000" }}>{formatCurrency(summary.totalSubtotal)}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <span style={{ opacity: 0.8 }}>GST (12%)</span>
-              <strong>{formatCurrency(summary.totalGst)}</strong>
+              <span style={{ color: "#333333", fontWeight: 500 }}>GST (12%)</span>
+              <strong style={{ color: "#000000" }}>{formatCurrency(summary.totalGst)}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <span style={{ opacity: 0.8 }}>Stamp Duty (6%)</span>
-              <strong>{formatCurrency(summary.totalStampDuty)}</strong>
+              <span style={{ color: "#333333", fontWeight: 500 }}>Stamp Duty (6%)</span>
+              <strong style={{ color: "#000000" }}>{formatCurrency(summary.totalStampDuty)}</strong>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem", paddingBottom: "0.75rem", borderBottom: "1px dashed rgba(255,255,255,0.2)" }}>
-              <span style={{ opacity: 0.8 }}>Registration</span>
-              <span>{formatCurrency(summary.totalRegistration)}</span>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem", paddingBottom: "0.75rem", borderBottom: "1px dashed rgba(0,0,0,0.2)" }}>
+              <span style={{ color: "#333333", fontWeight: 500 }}>Registration</span>
+              <strong style={{ color: "#000000" }}>{formatCurrency(summary.totalRegistration)}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <strong style={{ fontSize: "1.5rem", color: "#000000ff" }}>{formatCurrency(summary.grandTotal)}</strong>
+              <span style={{ fontSize: "1rem", fontWeight: 700, color: "#8a662e", textTransform: "uppercase", letterSpacing: "0.05em" }}>FINAL GRAND TOTAL</span>
+              <strong style={{ fontSize: "1.6rem", color: "#000000", fontWeight: 800 }}>{formatCurrency(summary.grandTotal)}</strong>
             </div>
           </div>
         </div>
