@@ -17,10 +17,23 @@ interface CostSheetModalProps {
 export function CostSheetModal({
   selectedOffices,
   selectedFloorNumber,
-  costMap = {},
+  costMap: initialCostMap,
   onClose,
   onEnquire,
 }: CostSheetModalProps) {
+  const [costMap, setCostMap] = React.useState<Record<string, OfficeCostData>>(initialCostMap || {});
+
+  React.useEffect(() => {
+    fetch("/api/costs")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && resData.data) {
+          setCostMap(resData.data);
+        }
+      })
+      .catch((err) => console.error("Error fetching live costs:", err));
+  }, []);
+
   const summary = calculateCostSheet(selectedOffices, selectedFloorNumber, costMap);
   const floorText = selectedFloorNumber ? `Floor ${selectedFloorNumber}` : "Typical Floors 7–22";
 
