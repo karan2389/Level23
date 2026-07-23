@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { X, FileText, Printer, Building2, CheckCircle2, ArrowRight } from "lucide-react";
+import { X, Download, Building2, ArrowRight, Loader2 } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { Office } from "@/types/unit";
 import { OfficeCostData } from "@/types/costs";
 import { calculateCostSheet, formatCurrency } from "@/utils/costCalculator";
@@ -24,6 +26,7 @@ export function CostSheetModal({
   onEnquire,
 }: CostSheetModalProps) {
   const [costMap, setCostMap] = React.useState<Record<string, OfficeCostData>>(initialCostMap || {});
+  const [isDownloading, setIsDownloading] = React.useState(false);
 
   React.useEffect(() => {
     fetchLiveCostMap().then((data) => setCostMap(data));
@@ -32,8 +35,28 @@ export function CostSheetModal({
   const summary = calculateCostSheet(selectedOffices, selectedFloorNumber, costMap);
   const floorText = selectedFloorNumber ? `Floor ${selectedFloorNumber}` : "Typical Floors 7–22";
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    try {
+      const element = document.getElementById("printable-cost-sheet");
+      if (!element) return;
+
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#1e1e1e" });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      
+      const officeNumbers = summary.items.map((item) => item.unitNo).join("_");
+      pdf.save(`Level23_Cost_Sheet_${officeNumbers}.pdf`);
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -67,7 +90,7 @@ export function CostSheetModal({
           <div style={{ overflowX: "auto", marginBottom: "1.5rem" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem" }}>
               <thead>
-                <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}>
+                <tr style={{ borderBottom: "2px solid rgba(255,255,255,0.1)", color: "rgba(0, 0, 0, 0.7)" }}>
                   <th style={{ padding: "0.75rem" }}>Unit No</th>
                   <th style={{ padding: "0.75rem" }}>Area</th>
                   <th style={{ padding: "0.75rem" }}>Rate</th>
@@ -142,11 +165,7 @@ export function CostSheetModal({
               <span>{formatCurrency(summary.totalRegistration)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <span style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--accent-color, #c9a063)", fontWeight: 700 }}>Final Grand Total</span>
-                <p style={{ fontSize: "0.75rem", opacity: 0.6, margin: 0 }}>*Exact to client's sheet</p>
-              </div>
-              <strong style={{ fontSize: "1.5rem", color: "#ffffff" }}>{formatCurrency(summary.grandTotal)}</strong>
+              <strong style={{ fontSize: "1.5rem", color: "#000000ff" }}>{formatCurrency(summary.grandTotal)}</strong>
             </div>
           </div>
         </div>
@@ -156,8 +175,9 @@ export function CostSheetModal({
           <button className="accent-button" type="button" onClick={() => { onClose(); onEnquire(); }}>
             Book / Enquire Now <ArrowRight size={18} />
           </button>
-          <button className="outline-button" type="button" onClick={handlePrint}>
-            <Printer size={18} /> Print Cost Sheet
+          <button className="outline-button" type="button" onClick={handleDownloadPDF} disabled={isDownloading} style={{ opacity: isDownloading ? 0.7 : 1, cursor: isDownloading ? "wait" : "pointer" }}>
+            {isDownloading ? <Loader2 size={18} className="animate-spin" style={{ animation: "spin 1s linear infinite" }} /> : <Download size={18} />} 
+            {isDownloading ? "Generating PDF..." : "Download Cost Sheet"}
           </button>
         </div>
       </article>

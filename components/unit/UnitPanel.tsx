@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Maximize2, Route, Building2, Info, ArrowRight, Download, X, Layers, FileText, AlertCircle } from "lucide-react";
+import { X, Building2, Route, Maximize2, Download, ArrowRight, Info, Layers, AlertCircle } from "lucide-react";
 import type { Office } from "@/types/unit";
 
 const TYPICAL_FLOORS = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
@@ -110,24 +110,6 @@ export function UnitPanel({
           <article><Building2 /><div><small>Dimensions</small><strong>{selectedOffice.dimensions}</strong></div></article>
           <article><Info /><div><small>Compass</small><strong>{selectedOffice.facing === "Window-facing" ? "North wing" : "South wing"}</strong></div></article>
         </div>
-
-        {/* Price + Cost Sheet row */}
-        <div className="office-popup-price-row">
-          <div className="office-popup-price">
-            <Info />
-            <div><small>Price</small><strong>Price on Request</strong><p>Final pricing will be added after builder confirmation.</p></div>
-          </div>
-          <button type="button" className="cost-sheet-btn" onClick={onEnquire} aria-label="Request cost sheet">
-            <FileText size={22} />
-            <span>Cost Sheet</span>
-          </button>
-        </div>
-
-        {/* View Cost Sheet */}
-        <button type="button" className="view-cost-sheet-btn outline-button" onClick={onEnquire} aria-label="View cost sheet">
-          <FileText size={18} /> View Cost Sheet
-        </button>
-
         {/* Actions */}
         <div className="office-popup-actions">
           <button className="accent-button" type="button" onClick={() => { onClose(); onEnquire(); }}>Enquire Now <ArrowRight /></button>
