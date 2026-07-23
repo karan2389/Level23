@@ -6,6 +6,8 @@ import { Office } from "@/types/unit";
 import { OfficeCostData } from "@/types/costs";
 import { calculateCostSheet, formatCurrency } from "@/utils/costCalculator";
 
+import { fetchLiveCostMap } from "@/utils/fetchCosts";
+
 interface CostSheetModalProps {
   selectedOffices: Office[];
   selectedFloorNumber: number | null;
@@ -24,14 +26,7 @@ export function CostSheetModal({
   const [costMap, setCostMap] = React.useState<Record<string, OfficeCostData>>(initialCostMap || {});
 
   React.useEffect(() => {
-    fetch(`/api/costs?t=${Date.now()}`, { cache: "no-store" })
-      .then((res) => res.json())
-      .then((resData) => {
-        if (resData.success && resData.data) {
-          setCostMap(resData.data);
-        }
-      })
-      .catch((err) => console.error("Error fetching live costs:", err));
+    fetchLiveCostMap().then((data) => setCostMap(data));
   }, []);
 
   const summary = calculateCostSheet(selectedOffices, selectedFloorNumber, costMap);

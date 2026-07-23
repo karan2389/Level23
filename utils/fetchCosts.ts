@@ -1,25 +1,15 @@
-import { NextResponse } from "next/server";
 import { OfficeCostData } from "@/types/costs";
 import { DEFAULT_OFFICE_COSTS } from "@/data/defaultCosts";
 
-// Disable caching so Google Sheet changes reflect immediately
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export async function GET() {
-  const sheetCsvUrl = process.env.GOOGLE_SHEET_CSV_URL;
+export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>> {
+  const sheetCsvUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_CSV_URL;
 
   if (!sheetCsvUrl) {
-    // Return default fallback costs if environment variable is not configured yet
-    return NextResponse.json({
-      success: true,
-      source: "default_fallback",
-      data: DEFAULT_OFFICE_COSTS,
-    });
+    return DEFAULT_OFFICE_COSTS;
   }
 
   try {
-    const res = await fetch(sheetCsvUrl, {
+    const res = await fetch(`${sheetCsvUrl}&t=${Date.now()}`, {
       cache: "no-store",
     });
 
@@ -32,8 +22,6 @@ export async function GET() {
 
     const costMap: Record<string, OfficeCostData> = {};
 
-    // Header row expected based on live CSV:
-    // FLOOR, UNIT NO, RATE, AREA, BASIC, FLOOR RISE, DEVELOPMENT CHARGES, D G BACKUP, RECREATIONAL FACILITES, SOCIETY FORMATION, LEGAL, OTHER CHARGES, TOTAL, GST, STAMP DUTY, REGISTRATION, GRAND TOTAL
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       if (row.length < 16) continue;
@@ -57,7 +45,6 @@ export async function GET() {
       const grandTotal = parseFloat(row[16]) || 0;
 
       if (!isNaN(floor) && !isNaN(unitNo)) {
-        // Derive office ID from unit no (e.g. 701 -> 1, 1012 -> 12)
         const officeId = unitNo % 100;
         const key = `${floor}_${officeId}`;
         
@@ -83,27 +70,14 @@ export async function GET() {
       }
     }
 
-    // Check if empty, fallback to default
     if (Object.keys(costMap).length === 0) {
-       throw new Error("No valid rows parsed from Google Sheet CSV");
+      return DEFAULT_OFFICE_COSTS;
     }
 
-    return NextResponse.json({
-      success: true,
-      source: "google_sheets",
-      data: costMap,
-    });
+    return costMap;
   } catch (error) {
-    console.error("Failed to fetch Google Sheet costs:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        source: "default_fallback_error",
-        error: String(error),
-        data: DEFAULT_OFFICE_COSTS,
-      },
-      { status: 200 } // Soft fallback to prevent UI breakage
-    );
+    console.error("Failed to fetch live costs:", error);
+    return DEFAULT_OFFICE_COSTS;
   }
 }
 
