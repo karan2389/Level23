@@ -52,16 +52,51 @@ export function CostSheetModal({
       
       const officeNumbers = summary.items.map((item) => item.unitNo).join("_");
       const filename = `Level23_Cost_Sheet_${officeNumbers || "Units"}.pdf`;
-      
-      // Attempt using data URI instead of Blob to bypass Edge/Chrome Blob UUID naming bugs
-      const dataUri = pdf.output("datauristring", { filename });
-      
-      const link = document.createElement("a");
-      link.href = dataUri;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const blob = pdf.output("blob");
+
+      // Robust fallback function with delayed revocation
+      const fallbackDownload = () => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.style.display = "none";
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Delay cleanup so browser download manager has time to read the filename
+        setTimeout(() => {
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+      };
+
+      // Use modern File System Access API if available (Chrome/Edge)
+      if ('showSaveFilePicker' in window) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const handle = await (window as any).showSaveFilePicker({
+            suggestedName: filename,
+            types: [{
+              description: 'PDF Document',
+              accept: { 'application/pdf': ['.pdf'] },
+            }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+        } catch (err: unknown) {
+          // If user cancels, AbortError is thrown. Only fallback on other errors.
+          if (err instanceof Error && err.name !== 'AbortError') {
+            console.error("FilePicker error:", err);
+            fallbackDownload();
+          } else if (!(err instanceof Error)) {
+            fallbackDownload();
+          }
+        }
+      } else {
+        fallbackDownload();
+      }
     } catch (error) {
       console.error("Failed to generate PDF:", error);
     } finally {
