@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { OfficeCostData } from "@/types/costs";
 import { DEFAULT_OFFICE_COSTS } from "@/data/defaultCosts";
 
-// Next.js ISR: Revalidate Google Sheet data every 60 seconds
-export const revalidate = 60;
+// Disable caching so Google Sheet changes reflect immediately
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   const sheetCsvUrl = process.env.GOOGLE_SHEET_CSV_URL;
@@ -19,7 +20,7 @@ export async function GET() {
 
   try {
     const res = await fetch(sheetCsvUrl, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
 
     if (!res.ok) {

@@ -24,7 +24,7 @@ export function CostSheetModal({
   const [costMap, setCostMap] = React.useState<Record<string, OfficeCostData>>(initialCostMap || {});
 
   React.useEffect(() => {
-    fetch("/api/costs")
+    fetch(`/api/costs?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((resData) => {
         if (resData.success && resData.data) {
