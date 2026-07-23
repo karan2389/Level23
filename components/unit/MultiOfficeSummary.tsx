@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FileText, Download, ArrowRight, X, Layers, Compass } from "lucide-react";
 import type { Office } from "@/types/unit";
+import { CostSheetModal } from "./CostSheetModal";
 
 // Parse the frontage value (feet part) from a dimensions string like "15'5\" × 47'9\""
 function parseFrontageFeet(dimensions: string): number {
@@ -54,6 +55,7 @@ export function MultiOfficeSummary({
   onSelectMore: () => void;
 }) {
   const count = selectedOffices.length;
+  const [showCostSheet, setShowCostSheet] = useState(false);
 
   const totals = useMemo(() => {
     const totalCarpetArea = selectedOffices.reduce((sum, o) => sum + o.carpetArea, 0);
@@ -150,7 +152,7 @@ export function MultiOfficeSummary({
               <p>A combined cost sheet will be connected after builder confirmation.</p>
             </div>
           </div>
-          <button type="button" className="cost-sheet-btn" onClick={onEnquire} aria-label="Request combined cost sheet">
+          <button type="button" className="cost-sheet-btn" onClick={() => setShowCostSheet(true)} aria-label="Request combined cost sheet">
             <FileText size={22} />
             <span>Cost Sheet</span>
           </button>
@@ -166,6 +168,15 @@ export function MultiOfficeSummary({
           </a>
         </div>
       </article>
+
+      {showCostSheet && (
+        <CostSheetModal
+          selectedOffices={selectedOffices}
+          selectedFloorNumber={selectedFloorNumber}
+          onClose={() => setShowCostSheet(false)}
+          onEnquire={() => { setShowCostSheet(false); onClose(); onEnquire(); }}
+        />
+      )}
     </div>
   );
 }
