@@ -51,7 +51,17 @@ export function CostSheetModal({
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       
       const officeNumbers = summary.items.map((item) => item.unitNo).join("_");
-      pdf.save(`Level23_Cost_Sheet_${officeNumbers}.pdf`);
+      const filename = `Level23_Cost_Sheet_${officeNumbers || "Units"}.pdf`;
+      
+      const blob = pdf.output("blob");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Failed to generate PDF:", error);
     } finally {
