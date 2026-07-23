@@ -2,7 +2,7 @@ import { OfficeCostData } from "@/types/costs";
 import { DEFAULT_OFFICE_COSTS } from "@/data/defaultCosts";
 
 export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>> {
-  const sheetCsvUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_CSV_URL;
+  const sheetCsvUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_CSV_URL || "https://docs.google.com/spreadsheets/d/e/2PACX-1vSEXSNH5U5wDR-XJsoed4h2qV9DfNG63_trL67fzaMUUd95MS_fbb6W5gMl7f-1iDmBxwqwozQVJl6F/pub?output=csv";
 
   if (!sheetCsvUrl) {
     return DEFAULT_OFFICE_COSTS;
