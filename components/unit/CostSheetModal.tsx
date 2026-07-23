@@ -53,15 +53,15 @@ export function CostSheetModal({
       const officeNumbers = summary.items.map((item) => item.unitNo).join("_");
       const filename = `Level23_Cost_Sheet_${officeNumbers || "Units"}.pdf`;
       
-      const blob = pdf.output("blob");
-      const url = URL.createObjectURL(blob);
+      // Attempt using data URI instead of Blob to bypass Edge/Chrome Blob UUID naming bugs
+      const dataUri = pdf.output("datauristring", { filename });
+      
       const link = document.createElement("a");
-      link.href = url;
+      link.href = dataUri;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Failed to generate PDF:", error);
     } finally {
