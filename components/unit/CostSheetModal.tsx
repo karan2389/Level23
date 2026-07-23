@@ -181,7 +181,7 @@ export function CostSheetModal({
             </div>
             <div>
               <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Legal & Society Form.</span>
-              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight 700 }}>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>
                 {formatCurrency(summary.totalLegal + summary.totalSocietyFormation)}
               </strong>
             </div>
