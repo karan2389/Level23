@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { X, Building2, Route, Maximize2, Download, ArrowRight, Info, Layers, AlertCircle } from "lucide-react";
+import { Building2, Route, Maximize2, Download, ArrowRight, Info, Layers, AlertCircle } from "lucide-react";
 import type { Office } from "@/types/unit";
 import { PLAN_HEIGHT, PLAN_WIDTH } from "@/constants/plan";
 import { useEnquiry } from "@/providers/EnquiryProvider";
+import { OverlayLayout } from "../common/OverlayLayout";
+import { OverlayHeader } from "../common/OverlayHeader";
+import { StickyActionBar } from "../common/StickyActionBar";
+import { getOfficeFacing } from "@/utils/officeUtils";
+import { CostSheetModal } from "./CostSheetModal";
+import { FileText } from "lucide-react";
 
 const TYPICAL_FLOORS = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
@@ -22,6 +28,7 @@ export function UnitPanel({
   onSelectMore: (floor: number) => void;
 }) {
   const [floorError, setFloorError] = useState(false);
+  const [showCostSheet, setShowCostSheet] = useState(false);
   const { openEnquiry } = useEnquiry();
 
   const handleSelectMore = () => {
@@ -37,27 +44,28 @@ export function UnitPanel({
   };
 
   return (
-    <div className="office-popup-backdrop" role="presentation" onClick={onClose}>
-      <article className="office-popup" role="dialog" aria-modal="true" aria-labelledby="office-popup-title" onClick={(event) => event.stopPropagation()}>
-        <button type="button" className="office-popup-close" onClick={onClose} aria-label="Close office details"><X /></button>
-        <header className="office-popup-header">
-          <span>Selected Office · Typical Floors 7–22</span>
-          <h2 id="office-popup-title">Office {String(selectedOffice.id).padStart(2, "0")}</h2>
-          <p>Review the selected office block and essential information.</p>
-        </header>
-
-        {/* Office preview card */}
-        <div
-          className="selected-office-crop"
-          style={{
-            aspectRatio: `${selectedOffice.w * PLAN_WIDTH} / ${selectedOffice.h * PLAN_HEIGHT}`,
-            backgroundImage: 'url("/images/plans/typical-plan.webp")',
-            backgroundSize: `${10000 / selectedOffice.w}% ${10000 / selectedOffice.h}%`,
-            backgroundPosition: `${selectedOffice.x / (100 - selectedOffice.w) * 100}% ${selectedOffice.y / (100 - selectedOffice.h) * 100}%`,
-          }}
-          aria-label={`Cropped floor-plan image for Office ${String(selectedOffice.id).padStart(2, "0")}`}
-        >
-          <span>Office {String(selectedOffice.id).padStart(2, "0")}</span>
+    <OverlayLayout onClose={onClose}>
+      <OverlayHeader 
+        title={`Office ${String(selectedOffice.id).padStart(2, "0")}`}
+        subtitle="Typical Floors 7–22"
+        onBack={onClose}
+        onClose={onClose}
+      />
+      
+      <div className="premium-overlay-content">
+        {/* Office summary card */}
+        <div className="summary-office-card text-only" style={{ background: "rgba(255,255,255,0.6)", borderRadius: "16px", padding: "16px", border: "1px solid var(--line)", marginBottom: "20px" }}>
+          <div className="summary-card-title" style={{ fontSize: "1.2rem", fontWeight: "600", marginBottom: "12px", borderBottom: "1px solid var(--line)", paddingBottom: "12px" }}>
+            Office {String(selectedOffice.id).padStart(2, "0")}
+          </div>
+          <div className="summary-card-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+            <span className="summary-card-label" style={{ color: "var(--muted)", fontSize: "0.9rem" }}>Carpet Area</span>
+            <span className="summary-card-value" style={{ fontWeight: "500" }}>{selectedOffice.carpetArea}</span>
+          </div>
+          <div className="summary-card-row" style={{ display: "flex", justifyContent: "space-between" }}>
+            <span className="summary-card-label" style={{ color: "var(--muted)", fontSize: "0.9rem" }}>Wing</span>
+            <span className="summary-card-value" style={{ fontWeight: "500" }}>{selectedOffice.facing === "Window-facing" ? "North wing" : "South wing"}</span>
+          </div>
         </div>
 
         {/* Select Floor + Select More CTA */}
@@ -104,16 +112,33 @@ export function UnitPanel({
         {/* Facts grid */}
         <div className="office-popup-facts">
           <article><Maximize2 /><div><small>Carpet Area</small><strong>{selectedOffice.carpetArea}</strong></div></article>
-          <article><Route /><div><small>Facing</small><strong>{selectedOffice.facing}</strong></div></article>
+          <article><Route /><div><small>Facing</small><strong>{getOfficeFacing(selectedOffice.id)}</strong></div></article>
           <article><Building2 /><div><small>Dimensions</small><strong>{selectedOffice.dimensions}</strong></div></article>
           <article><Info /><div><small>Compass</small><strong>{selectedOffice.facing === "Window-facing" ? "North wing" : "South wing"}</strong></div></article>
         </div>
-        {/* Actions */}
-        <div className="office-popup-actions">
-          <button className="accent-button" type="button" onClick={() => { openEnquiry("floor-plan", "floor-plan", { floor: selectedFloorNumber, offices: [selectedOffice] }); }}>Enquire Now <ArrowRight /></button>
-          <a className="outline-button" href="/docs/monopoly-layout-plan.pdf" target="_blank" rel="noreferrer"><Download /> Download Brochure</a>
-        </div>
-      </article>
-    </div>
+      </div>
+
+      {/* Actions */}
+      <StickyActionBar>
+        <button className="accent-button" type="button" onClick={() => { openEnquiry("floor-plan", "floor-plan", { floor: selectedFloorNumber, offices: [selectedOffice] }); }}>
+          Enquire Now <ArrowRight />
+        </button>
+        <button className="outline-button" type="button" onClick={() => setShowCostSheet(true)} style={{ background: "white" }}>
+          <FileText /> Cost Sheet
+        </button>
+        <a className="outline-button" href="/docs/monopoly-layout-plan.pdf" target="_blank" rel="noreferrer">
+          <Download /> Download Brochure
+        </a>
+      </StickyActionBar>
+
+      {showCostSheet && (
+        <CostSheetModal
+          selectedOffices={[selectedOffice]}
+          selectedFloorNumber={selectedFloorNumber}
+          onClose={() => setShowCostSheet(false)}
+        />
+      )}
+    </OverlayLayout>
   );
 }
+

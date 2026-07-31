@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Download, Building2, ArrowRight, Loader2 } from "lucide-react";
+import { Download, Building2, ArrowRight, Loader2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Office } from "@/types/unit";
@@ -10,6 +10,9 @@ import { calculateCostSheet, formatCurrency } from "@/utils/costCalculator";
 
 import { fetchLiveCostMap } from "@/utils/fetchCosts";
 import { useEnquiry } from "@/providers/EnquiryProvider";
+import { OverlayLayout } from "../common/OverlayLayout";
+import { OverlayHeader } from "../common/OverlayHeader";
+import { StickyActionBar } from "../common/StickyActionBar";
 
 interface CostSheetModalProps {
   selectedOffices: Office[];
@@ -105,39 +108,46 @@ export function CostSheetModal({
   };
 
   return (
-    <div className="office-popup-backdrop" role="presentation" onClick={onClose} style={{ zIndex: 1100 }}>
-      <article
-        className="office-popup summary-popup cost-sheet-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cost-sheet-title"
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "800px", width: "95%" }}
-      >
-        <button type="button" className="office-popup-close" onClick={onClose} aria-label="Close cost sheet">
-          <X />
-        </button>
+    <OverlayLayout onClose={onClose} zIndex={130}>
+      <OverlayHeader 
+        title="Cost Sheet"
+        onBack={onClose}
+        onClose={onClose}
+      />
 
-        {/* Header */}
-        <header className="office-popup-header" style={{ marginBottom: "1.5rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--accent-color, #c9a063)", fontSize: "0.85rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            <Building2 size={16} /> Commercial Investment Breakdown
+      <div className="premium-overlay-content" style={{ padding: 0, backgroundColor: "#faf7f2" }}>
+        {/* Printable Area */}
+        <div id="printable-cost-sheet" style={{ backgroundColor: "#faf7f2", color: "#111111", display: "flex", flexDirection: "column" }}>
+          
+          {/* Logo Branding Strip */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+             <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
+               <img src="/images/logos/akshar.png" alt="Akshar" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} crossOrigin="anonymous" />
+               <img src="/images/logos/bhagwati.png" alt="Bhagwati" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} crossOrigin="anonymous" />
+               <img src="/images/logos/level23.png" alt="Level 23" style={{ height: '40px', width: 'auto', objectFit: 'contain' }} crossOrigin="anonymous" />
+             </div>
+             <div style={{ fontSize: '0.65rem', textAlign: 'right', color: '#555', minWidth: '200px' }}>
+               MahaRERA Registration No. P51700028751 / P51700028752<br />
+               Available at website: maharera.mahaonline.gov.in
+             </div>
           </div>
-          <h2 id="cost-sheet-title" style={{ fontSize: "1.75rem", margin: "0.25rem 0" }}>
-            Official Estimate Cost Sheet
-          </h2>
-          <p style={{ opacity: 0.8 }}>{selectedOffices.length} Selected Units · {floorText}</p>
-        </header>
 
-        {/* Printable Area - Light Theme with Dark Numbers */}
-        <div id="printable-cost-sheet" className="cost-sheet-content" style={{ backgroundColor: "#faf7f2", color: "#111111", padding: "1.25rem", borderRadius: "12px" }}>
-          {/* Office Units Table */}
+          <div style={{ padding: "1.5rem" }}>
+            {/* Page Title inside printable area */}
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#111', marginBottom: '0.25rem' }}>Official Estimate Cost Sheet</h2>
+            <p style={{ color: '#555', marginBottom: '1.5rem', fontSize: '1rem' }}>{selectedOffices.length} Selected Units · {floorText}</p>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--accent-color, #c9a063)", fontSize: "0.85rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
+              <Building2 size={16} /> Commercial Investment Breakdown
+            </div>
+
+            {/* Office Units Table */}
           <div style={{ overflowX: "auto", marginBottom: "1.5rem" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem", color: "#000000" }}>
               <thead>
                 <tr style={{ borderBottom: "2px solid rgba(0,0,0,0.15)", color: "#333333" }}>
                   <th style={{ padding: "0.75rem" }}>Unit No</th>
-                  <th style={{ padding: "0.75rem" }}>Area</th>
+                  <th style={{ padding: "0.75rem" }}>Carpet Area</th>
                   <th style={{ padding: "0.75rem" }}>Rate</th>
                   <th style={{ padding: "0.75rem" }}>Floor Rise</th>
                   <th style={{ padding: "0.75rem", textAlign: "right" }}>Agreement Value</th>
@@ -147,7 +157,7 @@ export function CostSheetModal({
                 {summary.items.map((item) => (
                   <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", color: "#000000" }}>
                     <td style={{ padding: "0.75rem", fontWeight: 700, color: "#000000" }}>{item.unitNo}</td>
-                    <td style={{ padding: "0.75rem", color: "#222222" }}>{item.area} sq.ft</td>
+                    <td style={{ padding: "0.75rem", color: "#222222" }}>{item.carpetArea} sq.ft</td>
                     <td style={{ padding: "0.75rem", color: "#000000", fontWeight: 600 }}>{formatCurrency(item.rate)}</td>
                     <td style={{ padding: "0.75rem", color: "#000000" }}>{formatCurrency(item.floorRise)}</td>
                     <td style={{ padding: "0.75rem", textAlign: "right", fontWeight: 700, color: "#000000" }}>
@@ -163,7 +173,7 @@ export function CostSheetModal({
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem", backgroundColor: "#f2ece4", padding: "1.25rem", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", marginBottom: "1.5rem" }}>
             <div>
               <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Combined Carpet Area</span>
-              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{summary.totalArea.toFixed(2)} sq.ft</strong>
+              <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{summary.totalCarpetArea.toFixed(2)} sq.ft</strong>
             </div>
             <div>
               <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Basic Cost</span>
@@ -174,7 +184,7 @@ export function CostSheetModal({
               <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>{formatCurrency(summary.totalFloorRise)}</strong>
             </div>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Dev & Amenities</span>
+              <span style={{ fontSize: "0.8rem", color: "#555555", display: "block", fontWeight: 500 }}>Development Charges</span>
               <strong style={{ fontSize: "1.1rem", color: "#000000", fontWeight: 700 }}>
                 {formatCurrency(summary.totalDevelopment + summary.totalDgBackup + summary.totalRecreational)}
               </strong>
@@ -213,20 +223,21 @@ export function CostSheetModal({
               <span style={{ fontSize: "1rem", fontWeight: 700, color: "#8a662e", textTransform: "uppercase", letterSpacing: "0.05em" }}>FINAL GRAND TOTAL</span>
               <strong style={{ fontSize: "1.6rem", color: "#000000", fontWeight: 800 }}>{formatCurrency(summary.grandTotal)}</strong>
             </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Modal Action Buttons */}
-        <div className="office-popup-actions" style={{ marginTop: "1rem" }}>
-          <button className="accent-button" type="button" onClick={() => { onClose(); openEnquiry("cost-sheet", "floor-plan", { floor: selectedFloorNumber, offices: selectedOffices }); }}>
-            Book / Enquire Now <ArrowRight size={18} />
-          </button>
-          <button className="outline-button" type="button" onClick={handleDownloadPDF} disabled={isDownloading} style={{ opacity: isDownloading ? 0.7 : 1, cursor: isDownloading ? "wait" : "pointer" }}>
-            {isDownloading ? <Loader2 size={18} className="animate-spin" style={{ animation: "spin 1s linear infinite" }} /> : <Download size={18} />} 
-            {isDownloading ? "Generating PDF..." : "Download Cost Sheet"}
-          </button>
-        </div>
-      </article>
-    </div>
+      {/* Modal Action Buttons */}
+      <StickyActionBar>
+        <button className="accent-button" type="button" onClick={() => { onClose(); openEnquiry("cost-sheet", "floor-plan", { floor: selectedFloorNumber, offices: selectedOffices }); }}>
+          Book / Enquire Now <ArrowRight size={18} />
+        </button>
+        <button className="outline-button" type="button" onClick={handleDownloadPDF} disabled={isDownloading} style={{ opacity: isDownloading ? 0.7 : 1, cursor: isDownloading ? "wait" : "pointer" }}>
+          {isDownloading ? <Loader2 size={18} className="animate-spin" style={{ animation: "spin 1s linear infinite" }} /> : <Download size={18} />} 
+          {isDownloading ? "Generating PDF..." : "Download Cost Sheet"}
+        </button>
+      </StickyActionBar>
+    </OverlayLayout>
   );
 }

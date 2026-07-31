@@ -3,6 +3,7 @@ export interface OfficeCostData {
   unitNo: number; // e.g. 701, 702
   rate: number;
   area: number;
+  carpetArea?: number;
   basicCost: number;
   floorRise: number;
   developmentCharges: number;
@@ -20,11 +21,13 @@ export interface OfficeCostData {
 
 export interface SelectedOfficeCostBreakdown extends OfficeCostData {
   officeId: number; // 1 to 26
+  carpetArea: number;
 }
 
 export interface CostSheetSummary {
   items: SelectedOfficeCostBreakdown[];
   totalArea: number;
+  totalCarpetArea: number;
   totalBasicCost: number;
   totalFloorRise: number;
   totalDevelopment: number;

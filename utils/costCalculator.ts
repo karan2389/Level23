@@ -12,14 +12,17 @@ export function calculateCostSheet(
   const items: SelectedOfficeCostBreakdown[] = selectedOffices.map((office) => {
     const key = `${floor}_${office.id}`;
     const pricing = costMap[key] || getFallbackCostForOffice(floor, office.id);
+    const carpetArea = pricing.carpetArea ?? office.carpetArea ?? pricing.area;
 
     return {
       officeId: office.id,
-      ...pricing
+      ...pricing,
+      carpetArea,
     };
   });
 
   const totalArea = items.reduce((acc, item) => acc + item.area, 0);
+  const totalCarpetArea = items.reduce((acc, item) => acc + item.carpetArea, 0);
   const totalBasicCost = items.reduce((acc, item) => acc + item.basicCost, 0);
   const totalFloorRise = items.reduce((acc, item) => acc + item.floorRise, 0);
   const totalDevelopment = items.reduce((acc, item) => acc + item.developmentCharges, 0);
@@ -37,6 +40,7 @@ export function calculateCostSheet(
   return {
     items,
     totalArea,
+    totalCarpetArea,
     totalBasicCost,
     totalFloorRise,
     totalDevelopment,

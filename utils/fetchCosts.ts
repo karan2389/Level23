@@ -22,6 +22,9 @@ export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>
 
     const costMap: Record<string, OfficeCostData> = {};
 
+    const headerRow = rows[0] ? rows[0].map((h) => h.toLowerCase().trim()) : [];
+    const carpetAreaIndex = headerRow.findIndex((h) => h.includes("carpet"));
+
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       if (row.length < 16) continue;
@@ -30,6 +33,7 @@ export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>
       const unitNo = parseInt(row[1], 10);
       const rate = parseFloat(row[2]) || 0;
       const area = parseFloat(row[3]) || 0;
+      const carpetAreaVal = carpetAreaIndex !== -1 ? parseFloat(row[carpetAreaIndex]) : undefined;
       const basicCost = parseFloat(row[4]) || 0;
       const floorRise = parseFloat(row[5]) || 0;
       const developmentCharges = parseFloat(row[6]) || 0;
@@ -53,6 +57,7 @@ export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>
           unitNo,
           rate,
           area,
+          carpetArea: !isNaN(carpetAreaVal!) ? carpetAreaVal : undefined,
           basicCost,
           floorRise,
           developmentCharges,

@@ -1,10 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FileText, Download, ArrowRight, X, Layers, Compass } from "lucide-react";
+import { FileText, Download, ArrowRight, Layers, Compass } from "lucide-react";
 import type { Office } from "@/types/unit";
 import { CostSheetModal } from "./CostSheetModal";
 import { useEnquiry } from "@/providers/EnquiryProvider";
+import { OverlayLayout } from "../common/OverlayLayout";
+import { OverlayHeader } from "../common/OverlayHeader";
+import { StickyActionBar } from "../common/StickyActionBar";
+import { getOfficeFacing } from "@/utils/officeUtils";
 
 // Parse the frontage value (feet part) from a dimensions string like "15'5\" × 47'9\""
 function parseFrontageFeet(dimensions: string): number {
@@ -60,65 +64,44 @@ export function MultiOfficeSummary({
   const totals = useMemo(() => {
     const totalCarpetArea = selectedOffices.reduce((sum, o) => sum + o.carpetArea, 0);
     const combinedDimensions = buildCombinedDimensions(selectedOffices);
-    const uniqueFacings = [...new Set(selectedOffices.map((o) => o.facing))];
-    const uniqueWings = [...new Set(uniqueFacings.map(wingFromFacing))];
-    const compass = uniqueWings.length === 1 ? uniqueWings[0] : uniqueWings.join(" & ");
-    return { totalCarpetArea, combinedDimensions, compass };
+    const uniqueFacings = [...new Set(selectedOffices.map((o) => getOfficeFacing(o.id)))];
+    const combinedFacing = uniqueFacings.length === 1 ? uniqueFacings[0] : uniqueFacings.join(" & ");
+    return { totalCarpetArea, combinedDimensions, combinedFacing };
   }, [selectedOffices]);
 
   return (
-    <div className="office-popup-backdrop" role="presentation" onClick={onClose}>
-      <article
-        className="office-popup summary-popup"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="summary-popup-title"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <button type="button" className="office-popup-close" onClick={onClose} aria-label="Close summary">
-          <X />
-        </button>
+    <OverlayLayout onClose={onClose}>
+      <OverlayHeader 
+        title={`${count} Selected ${count === 1 ? "Office" : "Offices"}`}
+        subtitle={`Typical Floors 7–22${selectedFloorNumber ? ` · Floor ${selectedFloorNumber}` : ""}`}
+        onBack={onClose}
+        onClose={onClose}
+      />
 
-        {/* Header */}
-        <header className="office-popup-header">
-          <span>Selected Office Collection · Typical Floors 7–22{selectedFloorNumber ? ` · Floor ${selectedFloorNumber}` : ""}</span>
-          <h2 id="summary-popup-title">{count} Selected {count === 1 ? "Office" : "Offices"}</h2>
-          <p>Review every selected unit and the combined information.</p>
-        </header>
-
+      <div className="premium-overlay-content">
         {/* Office cards (concise text-only layout) */}
         {count === 0 ? (
           <p className="summary-empty">No offices selected. Go back and select some units.</p>
         ) : (
-          <div className={`summary-office-cards ${count === 1 ? "summary-cards-one" : count === 2 ? "summary-cards-two" : ""}`}>
+          <div className="premium-dashboard-grid">
             {selectedOffices.map((office) => (
-              <div key={office.id} className="summary-office-card text-only">
-                <div className="summary-card-title">Office {String(office.id).padStart(2, "0")}</div>
-                <div className="summary-card-row">
-                  <span className="summary-card-label">Carpet Area</span>
-                  <span className="summary-card-value">{office.carpetArea}</span>
+              <div key={office.id} className="summary-office-card text-only" style={{ background: "rgba(255,255,255,0.6)", borderRadius: "16px", padding: "16px", border: "1px solid var(--line)" }}>
+                <div className="summary-card-title" style={{ fontSize: "1.1rem", fontWeight: "500", marginBottom: "8px" }}>Office {String(office.id).padStart(2, "0")}</div>
+                <div className="summary-card-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                  <span className="summary-card-label" style={{ color: "var(--muted)", fontSize: "0.85rem" }}>Carpet Area</span>
+                  <span className="summary-card-value" style={{ fontWeight: "500" }}>{office.carpetArea}</span>
                 </div>
-                <div className="summary-card-row">
-                  <span className="summary-card-label">Wing</span>
-                  <span className="summary-card-value">{wingFromFacing(office.facing)}</span>
+                <div className="summary-card-row" style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span className="summary-card-label" style={{ color: "var(--muted)", fontSize: "0.85rem" }}>Facing</span>
+                  <span className="summary-card-value" style={{ fontWeight: "500" }}>{getOfficeFacing(office.id)}</span>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Select More CTA */}
-        <button type="button" className="office-select-more-btn summary-select-more" onClick={onSelectMore}>
-          <span className="office-select-more-icon"><Layers size={20} /></span>
-          <span className="office-select-more-text">
-            <strong>Select more office units</strong>
-            <small>Return to the plan and update this selection</small>
-          </span>
-          <ArrowRight size={18} className="office-select-more-arrow" />
-        </button>
-
-        {/* Combined stats (exactly 3 cards: Carpet Area, Combined Dimensions, Compass) */}
-        <div className="office-popup-facts summary-stats-grid">
+        {/* Combined stats */}
+        <div className="office-popup-facts summary-stats-grid" style={{ marginTop: "24px" }}>
           <article>
             <FileText />
             <div>
@@ -136,14 +119,26 @@ export function MultiOfficeSummary({
           <article>
             <Compass />
             <div>
-              <small>Compass</small>
-              <strong>{totals.compass}</strong>
+              <small>Facing</small>
+              <strong>{totals.combinedFacing}</strong>
             </div>
           </article>
         </div>
 
+        {/* Select More CTA */}
+        <div style={{ marginTop: "24px" }}>
+          <button type="button" className="office-select-more-btn summary-select-more" onClick={onSelectMore}>
+            <span className="office-select-more-icon"><Layers size={20} /></span>
+            <span className="office-select-more-text">
+              <strong>Select more office units</strong>
+              <small>Return to the plan and update this selection</small>
+            </span>
+            <ArrowRight size={18} className="office-select-more-arrow" />
+          </button>
+        </div>
+
         {/* Price + Cost Sheet row */}
-        <div className="office-popup-price-row">
+        <div className="office-popup-price-row" style={{ marginTop: "24px" }}>
           <div className="office-popup-price">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
             <div>
@@ -156,17 +151,17 @@ export function MultiOfficeSummary({
             <span>Cost Sheet</span>
           </button>
         </div>
+      </div>
 
-        {/* Actions */}
-        <div className="office-popup-actions">
-          <button className="accent-button" type="button" onClick={() => { openEnquiry("floor-plan", "floor-plan", { floor: selectedFloorNumber, offices: selectedOffices }); }}>
-            Enquire for Selected Units <ArrowRight />
-          </button>
-          <a className="outline-button" href="/docs/monopoly-layout-plan.pdf" target="_blank" rel="noreferrer">
-            <Download /> Download Brochure
-          </a>
-        </div>
-      </article>
+      {/* Actions */}
+      <StickyActionBar>
+        <button className="accent-button" type="button" onClick={() => { openEnquiry("floor-plan", "floor-plan", { floor: selectedFloorNumber, offices: selectedOffices }); }}>
+          Enquire for Selected Units <ArrowRight />
+        </button>
+        <a className="outline-button" href="/docs/monopoly-layout-plan.pdf" target="_blank" rel="noreferrer">
+          <Download /> Download Brochure
+        </a>
+      </StickyActionBar>
 
       {showCostSheet && (
         <CostSheetModal
@@ -175,6 +170,6 @@ export function MultiOfficeSummary({
           onClose={() => setShowCostSheet(false)}
         />
       )}
-    </div>
+    </OverlayLayout>
   );
 }
