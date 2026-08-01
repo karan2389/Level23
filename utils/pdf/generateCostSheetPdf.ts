@@ -248,7 +248,7 @@ export async function generateCostSheetPdf(
 
   const summaryRows: [string, string][] = [
     ["Total Carpet Area",           `${fmt(summary.totalCarpetArea)} sq.ft`],
-    ["Basic Cost",                  `Rs. ${fmt(summary.totalBasicCost)}`],
+    ["Total Agreement Value",       `Rs. ${fmt(summary.totalSubtotal)}`],
     ["Floor Rise",                  `Rs. ${fmt(summary.totalFloorRise)}`],
     ["Development Charges",         `Rs. ${fmt(summary.totalDevelopment)}`],
     ["Other Charges (FSI / IFMS / Legal)", `Rs. ${fmt(otherFees)}`],

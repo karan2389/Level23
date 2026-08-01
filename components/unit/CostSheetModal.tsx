@@ -498,7 +498,7 @@ export function CostSheetModal({
             >
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "0.6rem 1rem", alignItems: "center", fontSize: "0.82rem", color: "#111111" }}>
                 <span style={{ fontWeight: 700 }}>Total Agreement Value</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalBasicCost)}</strong>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalSubtotal)}</strong>
                 <span style={{ fontWeight: 700 }}>GST</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalGst)}</strong>
                 <span style={{ fontWeight: 700 }}>Maintenance</span>
