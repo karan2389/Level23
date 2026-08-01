@@ -1,28 +1,27 @@
 ﻿/**
- * generateCostSheetPdf.ts
+ * generateCostSheetPdf.ts - Premium Edition
  *
- * Generates a professional A4 PDF Cost Sheet using jsPDF's native text/drawing API.
- * Input: CostSheetSummary (already-calculated values from calculateCostSheet)
- * Output: Blob (ready for download)
+ * Professional A4 commercial quotation document for Level23.
+ * Visual redesign only - all business logic and data mapping unchanged.
+ * Uses jsPDF native text/drawing API. No DOM screenshots.
  *
- * NO html2canvas. NO DOM screenshots. Pure structured-data -> PDF.
+ * Design: Premium commercial real-estate aesthetic.
+ * 8pt grid system (1 grid unit = 2mm).
+ * Color palette: Navy #435A73, White backgrounds, no orange/beige.
  */
 
 import jsPDF from "jspdf";
 import { CostSheetSummary } from "@/types/costs";
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// ── Formatting helpers ──────────────────────────────────────────────────────
 
 function fmt(num: number): string {
   if (isNaN(num) || num == null) return "0";
-  return new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(
-    Math.round(num)
-  );
+  return new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(Math.round(num));
 }
 
 function getOrdinalFloor(n: number): string {
-  const j = n % 10,
-    k = n % 100;
+  const j = n % 10, k = n % 100;
   if (j === 1 && k !== 11) return `${n}st Floor`;
   if (j === 2 && k !== 12) return `${n}nd Floor`;
   if (j === 3 && k !== 13) return `${n}rd Floor`;
@@ -31,46 +30,52 @@ function getOrdinalFloor(n: number): string {
 
 function getFormattedDate(): string {
   const d = new Date();
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}/${d.getFullYear()}`;
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 }
 
-/** Fetch a public asset and return a base64 data-URL string */
 async function fetchBase64(url: string): Promise<string | null> {
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
     const buf = await res.arrayBuffer();
     const bytes = new Uint8Array(buf);
-    let binary = "";
-    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    let b = "";
+    for (let i = 0; i < bytes.byteLength; i++) b += String.fromCharCode(bytes[i]);
     const ext = url.split(".").pop()?.toLowerCase();
     const mime = ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/png";
-    return `data:${mime};base64,${btoa(binary)}`;
+    return `data:${mime};base64,${btoa(b)}`;
   } catch {
     return null;
   }
 }
 
-// ─── page constants (mm) ────────────────────────────────────────────────────
+// ── Design tokens (mm, 8pt grid: 1 unit = 2mm) ─────────────────────────────
 
-const PAGE_W = 210;
-const PAGE_H = 297;
-const MARGIN_L = 14;
-const MARGIN_R = 14;
-const CONTENT_W = PAGE_W - MARGIN_L - MARGIN_R;
+const PW = 210;           // A4 width
+const PH = 297;           // A4 height
+const ML = 14;            // margin left
+const MR = 14;            // margin right
+const CW = PW - ML - MR; // content width = 182mm
 
-// Brand colours [R, G, B]
-const NAVY: [number, number, number] = [23, 54, 77];
-const WARM: [number, number, number] = [197, 127, 60];
-const BLACK: [number, number, number] = [5, 5, 5];
-const WHITE: [number, number, number] = [255, 255, 255];
-const LIGHT_BG: [number, number, number] = [250, 247, 242];
-const SLAB_BG: [number, number, number] = [238, 232, 223];
-const TOTAL_BG: [number, number, number] = [242, 234, 220];
+type RGB = [number, number, number];
 
-// ─── main export ────────────────────────────────────────────────────────────
+// Color palette — premium slate-blue, no orange/beige
+const C_NAVY:     RGB = [22,  44,  63];   // deep dark navy  #162C3F
+const C_SLATE:    RGB = [67,  90,  115];  // primary accent  #435A73
+const C_SLATE_L:  RGB = [75,  97,  120];  // lighter slate   #4B6178
+const C_SLATE_D:  RGB = [64,  88,  112];  // darker slate    #405870
+const C_WHITE:    RGB = [255, 255, 255];
+const C_INK:      RGB = [18,  32,  46];   // very dark text
+const C_BODY:     RGB = [55,  70,  85];   // body text
+const C_MUTED:    RGB = [100, 118, 132];  // grey labels
+const C_CAPTION:  RGB = [148, 162, 174];  // light grey captions
+const C_BG:       RGB = [247, 250, 253];  // very light page bg
+const C_BORDER:   RGB = [213, 226, 236];  // subtle border
+const C_ROW_ALT:  RGB = [244, 248, 252];  // alternating table row
+const C_TH_BG:    RGB = [226, 237, 246];  // table header
+const C_ACCENT_L: RGB = [233, 242, 250];  // light accent bg
+
+// ── Main export ─────────────────────────────────────────────────────────────
 
 export async function generateCostSheetPdf(
   summary: CostSheetSummary,
@@ -78,323 +83,495 @@ export async function generateCostSheetPdf(
 ): Promise<Blob> {
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-  // Pre-fetch logos in parallel
   const [aksharB64, bhagwatiB64, level23B64] = await Promise.all([
     fetchBase64("/images/logos/akshar.png"),
     fetchBase64("/images/logos/bhagwati.png"),
     fetchBase64("/images/logos/level23.png"),
   ]);
 
-  let y = MARGIN_L;
+  let y = 0;
 
-  function needPage(height: number) {
-    if (y + height > PAGE_H - 14) {
+  function checkPage(needed: number) {
+    if (y + needed > PH - 16) {
       pdf.addPage();
-      y = MARGIN_L;
+      y = 16;
     }
   }
 
-  function setColor(rgb: [number, number, number]) {
-    pdf.setTextColor(rgb[0], rgb[1], rgb[2]);
+  function T(c: RGB)  { pdf.setTextColor(c[0], c[1], c[2]); }
+  function F(c: RGB)  { pdf.setFillColor(c[0], c[1], c[2]); }
+  function D(c: RGB)  { pdf.setDrawColor(c[0], c[1], c[2]); }
+
+  function hline(yy: number, c: RGB = C_BORDER, lw = 0.2) {
+    D(c);
+    pdf.setLineWidth(lw);
+    pdf.line(ML, yy, ML + CW, yy);
   }
 
-  function setFill(rgb: [number, number, number]) {
-    pdf.setFillColor(rgb[0], rgb[1], rgb[2]);
+  function sectionHeading(text: string) {
+    pdf.setFontSize(9);
+    pdf.setFont("helvetica", "bold");
+    T(C_SLATE);
+    pdf.setCharSpace(1.5);
+    pdf.text(text, ML, y);
+    pdf.setCharSpace(0);
+    // Accent underline bar (8mm wide, 1.5mm tall)
+    F(C_SLATE);
+    pdf.rect(ML, y + 2, 24, 1, "F");
+    y += 8; // 4mm heading + 4mm gap below
   }
 
-  function setDraw(rgb: [number, number, number]) {
-    pdf.setDrawColor(rgb[0], rgb[1], rgb[2]);
-  }
+  // ══════════════════════════════════════════════════════════════════════════
+  // 1. HEADER BAND
+  // ══════════════════════════════════════════════════════════════════════════
 
-  // ── HEADER ──────────────────────────────────────────────────────────────
-  setFill([248, 243, 237]);
-  pdf.rect(0, 0, PAGE_W, 28, "F");
+  // Top navy accent bar (4mm)
+  F(C_SLATE);
+  pdf.rect(0, 0, PW, 4, "F");
 
+  // White header background
+  F(C_WHITE);
+  pdf.rect(0, 4, PW, 44, "F");
+
+  // --- Logo Row (y: 4 to 30mm) ---
+  // Divide into 3 equal zones of ~60.7mm each
+  const zW = CW / 3;
+
+  // Akshar (left zone): width = zW - 20mm padding, height = auto
   if (aksharB64) {
-    pdf.addImage(aksharB64, "PNG", MARGIN_L, 5, 0, 16, undefined, "FAST");
+    const lw = Math.min(zW - 16, 50);
+    pdf.addImage(aksharB64, "PNG", ML + 8, 9, lw, 0, undefined, "FAST");
   }
 
+  // Level23 (center zone): slightly larger to be dominant
   if (level23B64) {
-    const logoW = 32;
-    pdf.addImage(level23B64, "PNG", PAGE_W / 2 - logoW / 2, 3, logoW, 0, undefined, "FAST");
+    const lw = Math.min(zW - 6, 58);
+    pdf.addImage(level23B64, "PNG", ML + zW + 3, 7, lw, 0, undefined, "FAST");
   }
-  pdf.setFontSize(5);
-  pdf.setFont("helvetica", "bold");
-  setColor([85, 105, 120]);
-  pdf.text("PREMIUM OFFICE SPACES", PAGE_W / 2, 24, { align: "center", charSpace: 1 });
 
+  // Bhagwati (right zone)
   if (bhagwatiB64) {
-    pdf.addImage(bhagwatiB64, "PNG", PAGE_W / 2 + 20, 5, 0, 16, undefined, "FAST");
+    const lw = Math.min(zW - 16, 50);
+    pdf.addImage(bhagwatiB64, "PNG", ML + 2 * zW + 8, 9, lw, 0, undefined, "FAST");
   }
 
-  // MahaRERA box
-  const reraX = PAGE_W - MARGIN_R - 48;
-  const reraY = 5;
-  const reraW = 48;
-  const reraH = 16;
-  setFill(WHITE);
-  setDraw([224, 180, 180]);
-  pdf.setLineWidth(0.3);
-  pdf.roundedRect(reraX, reraY, reraW, reraH, 1.5, 1.5, "FD");
-  setFill([255, 241, 241]);
-  pdf.rect(reraX + 2, reraY + 2, 6, 6, "F");
+  // "PREMIUM OFFICE SPACES" tagline centered
+  pdf.setFontSize(6.5);
+  pdf.setFont("helvetica", "bold");
+  T(C_MUTED);
+  pdf.setCharSpace(2);
+  pdf.text("PREMIUM OFFICE SPACES", PW / 2, 34, { align: "center" });
+  pdf.setCharSpace(0);
+
+  // Thin separator
+  D(C_BORDER);
+  pdf.setLineWidth(0.25);
+  pdf.line(0, 38, PW, 38);
+
+  // Title row (y: 40–60mm) - dark band
+  F([236, 243, 249]);
+  pdf.rect(0, 38, PW, 22, "F");
+
+  // "Official Estimate Cost Sheet"
+  pdf.setFontSize(18);
+  pdf.setFont("helvetica", "bold");
+  T(C_NAVY);
+  pdf.text("Official Estimate Cost Sheet", ML, 52);
+
+  // MahaRERA badge on the right of the title row
+  const reraX = PW - MR - 56;
+  const reraY = 41;
+  F(C_WHITE);
+  D(C_BORDER);
+  pdf.setLineWidth(0.2);
+  pdf.roundedRect(reraX, reraY, 56, 16, 1.5, 1.5, "FD");
+  // Left accent strip on badge
+  F(C_SLATE);
+  pdf.rect(reraX, reraY, 2.5, 16, "F");
   pdf.setFontSize(6);
   pdf.setFont("helvetica", "bold");
-  setColor([17, 24, 39]);
-  pdf.text("MAHARERA # P52100079469", reraX + 10, reraY + 7);
-  pdf.setFontSize(5);
+  T(C_INK);
+  pdf.text("MAHARERA REGISTERED", reraX + 5.5, reraY + 6);
   pdf.setFont("helvetica", "normal");
-  setColor([75, 85, 99]);
-  pdf.text("maharera.mahaonline.gov.in", reraX + 10, reraY + 12);
+  T(C_MUTED);
+  pdf.text("No. P51700053764", reraX + 5.5, reraY + 10.5);
+  pdf.setFontSize(5.5);
+  pdf.text("maharera.mahaonline.gov.in", reraX + 5.5, reraY + 14);
 
-  setDraw([0, 0, 0]);
-  pdf.setLineWidth(0.15);
-  pdf.line(0, 28, PAGE_W, 28);
+  // Header bottom separator (2mm navy bar)
+  F(C_SLATE);
+  pdf.rect(0, 60, PW, 1.5, "F");
 
-  y = 33;
+  y = 64;
 
-  // ── TITLE BLOCK ─────────────────────────────────────────────────────────
-  pdf.setFontSize(17);
-  pdf.setFont("helvetica", "bold");
-  setColor(BLACK);
-  pdf.text("Official Estimate Cost Sheet", MARGIN_L, y);
-  y += 5;
+  // ══════════════════════════════════════════════════════════════════════════
+  // 2. INFORMATION BAR  (Date | Floor | Units)
+  // ══════════════════════════════════════════════════════════════════════════
 
   const floorLabel = selectedFloorNumber
     ? getOrdinalFloor(selectedFloorNumber)
     : "Typical Floors 7-22";
-  pdf.setFontSize(8.5);
-  pdf.setFont("helvetica", "normal");
-  setColor([51, 51, 51]);
-  pdf.text(
-    `${summary.items.length} Selected Unit${summary.items.length !== 1 ? "s" : ""} | ${floorLabel} | Date: ${getFormattedDate()}`,
-    MARGIN_L,
-    y
-  );
-  y += 5;
 
-  pdf.setFontSize(7);
-  pdf.setFont("helvetica", "bold");
-  setColor(WARM);
-  pdf.text("COMMERCIAL INVESTMENT BREAKDOWN", MARGIN_L, y + 2);
-  y += 7;
-
-  // ── UNITS TABLE ─────────────────────────────────────────────────────────
-  needPage(16 + summary.items.length * 9 + 4);
-
-  const colW: [number, number, number, number, number] = [20, 36, 28, 30, CONTENT_W - 20 - 36 - 28 - 30];
-  const colX: [number, number, number, number, number] = [
-    MARGIN_L,
-    MARGIN_L + colW[0],
-    MARGIN_L + colW[0] + colW[1],
-    MARGIN_L + colW[0] + colW[1] + colW[2],
-    MARGIN_L + colW[0] + colW[1] + colW[2] + colW[3],
+  const infoItems: [string, string][] = [
+    ["GENERATED", getFormattedDate()],
+    ["FLOOR", floorLabel],
+    ["UNITS SELECTED", `${summary.items.length} Office${summary.items.length !== 1 ? "s" : ""}`],
   ];
-  const headers = ["Unit No", "Carpet Area", "Rate (psf)", "Floor Rise", "Agreement Value"];
 
-  setFill([215, 228, 240]);
-  pdf.rect(MARGIN_L, y, CONTENT_W, 8, "F");
-  setDraw([160, 180, 200]);
+  const INFO_H = 16;
+  const infoW = CW / infoItems.length;
+
+  F(C_ACCENT_L);
+  D(C_BORDER);
   pdf.setLineWidth(0.2);
-  pdf.rect(MARGIN_L, y, CONTENT_W, 8, "D");
+  pdf.roundedRect(ML, y, CW, INFO_H, 2, 2, "FD");
 
-  pdf.setFontSize(7.5);
-  pdf.setFont("helvetica", "bold");
-  setColor(NAVY);
-  headers.forEach((h, i) => {
-    if (i === 4) {
-      pdf.text(h, colX[i] + colW[i] - 2, y + 5.2, { align: "right" });
-    } else {
-      pdf.text(h, colX[i] + 2, y + 5.2);
+  infoItems.forEach(([label, value], i) => {
+    const cx = ML + i * infoW + infoW / 2;
+
+    if (i > 0) {
+      D(C_BORDER);
+      pdf.setLineWidth(0.2);
+      pdf.line(ML + i * infoW, y + 3, ML + i * infoW, y + INFO_H - 3);
     }
-  });
-  y += 8;
-
-  summary.items.forEach((item, idx) => {
-    needPage(9);
-    const bg: [number, number, number] = idx % 2 === 0 ? WHITE : [247, 244, 240];
-    setFill(bg);
-    pdf.rect(MARGIN_L, y, CONTENT_W, 9, "F");
-    setDraw([220, 215, 208]);
-    pdf.setLineWidth(0.15);
-    pdf.line(MARGIN_L, y + 9, MARGIN_L + CONTENT_W, y + 9);
-
-    pdf.setFontSize(7.5);
-    pdf.setFont("helvetica", "bold");
-    setColor(BLACK);
-    pdf.text(String(item.officeId), colX[0] + 2, y + 5.8);
-
-    pdf.setFont("helvetica", "normal");
-    pdf.text(`${fmt(item.carpetArea)} sq.ft`, colX[1] + 2, y + 5.8);
-    pdf.text(`Rs.${fmt(item.rate)}`, colX[2] + 2, y + 5.8);
-    pdf.text(idx === 0 ? `Rs.${fmt(summary.totalFloorRise)}` : "-", colX[3] + 2, y + 5.8);
-
-    pdf.setFont("helvetica", "bold");
-    pdf.text(`Rs.${fmt(item.basicCost)}`, colX[4] + colW[4] - 2, y + 5.8, { align: "right" });
-    y += 9;
-  });
-
-  y += 5;
-
-  // ── COST SUMMARY SLAB ───────────────────────────────────────────────────
-  const slabItems: [string, string][] = [
-    ["Combined Carpet Area", `${fmt(summary.totalCarpetArea)} sq.ft`],
-    ["Basic Cost", `Rs.${fmt(summary.totalBasicCost)}`],
-    ["Total Floor Rise", `Rs.${fmt(summary.totalFloorRise)}`],
-    ["Development Charges", `Rs.${fmt(summary.totalDevelopment)}`],
-    ["Legal & Society Formation", `Rs.${fmt(summary.totalLegal + summary.totalSocietyFormation + summary.totalRecreational)}`],
-    ["Other Charges", `Rs.${fmt(summary.totalOtherCharges)}`],
-    ["Electricity & Water Deposit", `Rs.${fmt(summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000)}`],
-    ["Car Park", `${summary.items.length * 2} Nos. (Included)`],
-  ];
-
-  const slabCols = 4;
-  const cellW = CONTENT_W / slabCols;
-  const cellH = 14;
-  const slabH = Math.ceil(slabItems.length / slabCols) * cellH + 2;
-
-  needPage(slabH + 6);
-
-  setFill(SLAB_BG);
-  setDraw([200, 192, 180]);
-  pdf.setLineWidth(0.25);
-  pdf.roundedRect(MARGIN_L, y, CONTENT_W, slabH, 2, 2, "FD");
-
-  slabItems.forEach((item, i) => {
-    const col = i % slabCols;
-    const row = Math.floor(i / slabCols);
-    const cx = MARGIN_L + col * cellW + 4;
-    const cy = y + row * cellH + 6;
 
     pdf.setFontSize(6.5);
     pdf.setFont("helvetica", "normal");
-    setColor([31, 41, 51]);
-    pdf.text(item[0], cx, cy);
+    T(C_MUTED);
+    pdf.setCharSpace(1);
+    pdf.text(label, cx, y + 5.5, { align: "center" });
+    pdf.setCharSpace(0);
 
-    pdf.setFontSize(9);
+    pdf.setFontSize(9.5);
     pdf.setFont("helvetica", "bold");
-    setColor(BLACK);
-    pdf.text(item[1], cx, cy + 6);
+    T(C_INK);
+    pdf.text(value, cx, y + 12.5, { align: "center" });
   });
 
-  y += slabH + 5;
+  y += INFO_H + 14; // 14mm gap = 7 grid units
 
-  // ── GRAND TOTAL PANEL ───────────────────────────────────────────────────
-  const otherFees =
-    summary.totalOtherCharges +
-    summary.totalDevelopment +
-    summary.totalLegal +
-    summary.totalSocietyFormation +
-    summary.totalRecreational;
+  // ══════════════════════════════════════════════════════════════════════════
+  // 3. UNITS TABLE
+  // ══════════════════════════════════════════════════════════════════════════
+
+  checkPage(20 + summary.items.length * 10 + 6);
+
+  sectionHeading("COMMERCIAL INVESTMENT BREAKDOWN");
+
+  // Column widths (must sum to CW = 182mm)
+  // Unit | Carpet Area | Rate (psf) | Floor Rise | Agreement Value
+  const COL: [number, number, number, number, number] = [20, 40, 34, 36, CW - 20 - 40 - 34 - 36];
+  const CX: [number, number, number, number, number] = [
+    ML,
+    ML + COL[0],
+    ML + COL[0] + COL[1],
+    ML + COL[0] + COL[1] + COL[2],
+    ML + COL[0] + COL[1] + COL[2] + COL[3],
+  ];
+  const HDRS = ["UNIT", "CARPET AREA", "RATE (PSF)", "FLOOR RISE", "AGREEMENT VALUE"];
+
+  // Table header row
+  const TH_H = 10;
+  F(C_TH_BG);
+  pdf.rect(ML, y, CW, TH_H, "F");
+  D(C_SLATE);
+  pdf.setLineWidth(0.3);
+  pdf.line(ML, y, ML + CW, y);
+  pdf.line(ML, y + TH_H, ML + CW, y + TH_H);
+
+  HDRS.forEach((h, i) => {
+    pdf.setFontSize(7);
+    pdf.setFont("helvetica", "bold");
+    T(C_NAVY);
+    pdf.setCharSpace(0.5);
+    if (i === 4) {
+      pdf.text(h, CX[i] + COL[i] - 3, y + 6.5, { align: "right" });
+    } else {
+      pdf.text(h, CX[i] + 3, y + 6.5);
+    }
+    pdf.setCharSpace(0);
+  });
+  y += TH_H;
+
+  // Data rows
+  const ROW_H = 10;
+  summary.items.forEach((item, idx) => {
+    checkPage(ROW_H + 2);
+    const bg: RGB = idx % 2 === 0 ? C_WHITE : C_ROW_ALT;
+    F(bg);
+    pdf.rect(ML, y, CW, ROW_H, "F");
+    D(C_BORDER);
+    pdf.setLineWidth(0.15);
+    pdf.line(ML, y + ROW_H, ML + CW, y + ROW_H);
+
+    // Unit number (bold, dark)
+    pdf.setFontSize(8.5);
+    pdf.setFont("helvetica", "bold");
+    T(C_INK);
+    pdf.text(`Unit ${item.officeId}`, CX[0] + 3, y + 6.5);
+
+    // Other columns (normal weight)
+    pdf.setFont("helvetica", "normal");
+    T(C_BODY);
+    pdf.text(`${fmt(item.carpetArea)} sq.ft`, CX[1] + 3, y + 6.5);
+    pdf.text(`Rs. ${fmt(item.rate)}`, CX[2] + 3, y + 6.5);
+    pdf.text(idx === 0 ? `Rs. ${fmt(summary.totalFloorRise)}` : "—", CX[3] + 3, y + 6.5);
+
+    // Agreement value (right-aligned, bold)
+    pdf.setFont("helvetica", "bold");
+    T(C_INK);
+    pdf.text(`Rs. ${fmt(item.basicCost)}`, CX[4] + COL[4] - 3, y + 6.5, { align: "right" });
+
+    y += ROW_H;
+  });
+
+  // Table footer bar
+  D(C_SLATE_D);
+  pdf.setLineWidth(0.4);
+  pdf.line(ML, y, ML + CW, y);
+
+  y += 16; // 8 grid units gap
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 4. COST SUMMARY — KPI CARDS  (4 per row, 2 rows)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  const kpiData: [string, string][] = [
+    ["Combined Carpet Area",   `${fmt(summary.totalCarpetArea)} sq.ft`],
+    ["Basic Agreement Value",  `Rs. ${fmt(summary.totalBasicCost)}`],
+    ["Total Floor Rise",       `Rs. ${fmt(summary.totalFloorRise)}`],
+    ["Development Charges",    `Rs. ${fmt(summary.totalDevelopment)}`],
+    ["Legal & Society",        `Rs. ${fmt(summary.totalLegal + summary.totalSocietyFormation + summary.totalRecreational)}`],
+    ["Other Charges",          `Rs. ${fmt(summary.totalOtherCharges)}`],
+    ["Electricity & Water",    `Rs. ${fmt(summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000)}`],
+    ["Car Parking",            `${summary.items.length * 2} Nos. (Incl.)`],
+  ];
+
+  const CARD_COLS = 4;
+  const CARD_GAP  = 4;  // 2 grid units
+  const CARD_W    = (CW - (CARD_COLS - 1) * CARD_GAP) / CARD_COLS; // ~41.5mm each
+  const CARD_H    = 20; // 10 grid units
+  const CARD_ROWS = Math.ceil(kpiData.length / CARD_COLS);
+
+  checkPage((CARD_H + CARD_GAP) * CARD_ROWS + 16);
+
+  sectionHeading("COST SUMMARY");
+
+  for (let row = 0; row < CARD_ROWS; row++) {
+    checkPage(CARD_H + CARD_GAP);
+    for (let col = 0; col < CARD_COLS; col++) {
+      const idx = row * CARD_COLS + col;
+      if (idx >= kpiData.length) break;
+      const [label, value] = kpiData[idx];
+      const cx = ML + col * (CARD_W + CARD_GAP);
+
+      // Card shell: white bg + subtle border
+      F(C_WHITE);
+      D(C_BORDER);
+      pdf.setLineWidth(0.2);
+      pdf.roundedRect(cx, y, CARD_W, CARD_H, 1.5, 1.5, "FD");
+
+      // Top accent strip (navy, 2px)
+      F(C_SLATE);
+      pdf.rect(cx, y, CARD_W, 1.5, "F");
+
+      // Label (small, muted)
+      pdf.setFontSize(6.5);
+      pdf.setFont("helvetica", "normal");
+      T(C_MUTED);
+      pdf.text(label, cx + 4, y + 8);
+
+      // Value (larger, dark bold)
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "bold");
+      T(C_INK);
+      const valLines = pdf.splitTextToSize(value, CARD_W - 8);
+      pdf.text(valLines, cx + 4, y + 15.5);
+    }
+    y += CARD_H + CARD_GAP;
+  }
+
+  y += 12; // 6 grid units gap
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 5. GRAND TOTAL PANEL
+  // ══════════════════════════════════════════════════════════════════════════
+
+  const otherFees = summary.totalOtherCharges + summary.totalDevelopment +
+    summary.totalLegal + summary.totalSocietyFormation + summary.totalRecreational;
   const elecDeposit = summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000;
   const maintenance = summary.totalCarpetArea * 100;
 
-  const totalRows: [string, string][] = [
-    ["Total Agreement Value", `Rs.${fmt(summary.totalBasicCost)}`],
-    ["GST", `Rs.${fmt(summary.totalGst)}`],
-    ["Maintenance", `Rs.${fmt(maintenance)}`],
-    ["Other Charges / FSI / IFMS / Legal", `Rs.${fmt(otherFees)}`],
-    ["Electricity & Water Deposit", `Rs.${fmt(elecDeposit)}`],
-    ["Car Park", `${summary.items.length * 2} Nos. (Included)`],
+  const grandRows: [string, string][] = [
+    ["Total Agreement Value",             `Rs. ${fmt(summary.totalBasicCost)}`],
+    ["GST",                               `Rs. ${fmt(summary.totalGst)}`],
+    ["Maintenance",                       `Rs. ${fmt(maintenance)}`],
+    ["Other Charges / FSI / IFMS / Legal",`Rs. ${fmt(otherFees)}`],
+    ["Electricity & Water Deposit",       `Rs. ${fmt(elecDeposit)}`],
+    ["Car Parking",                       `${summary.items.length * 2} Nos. (Included)`],
   ];
 
-  const panelH = totalRows.length * 8 + 14;
-  needPage(panelH + 6);
+  // Panel height: top padding (8) + rows (9 each) + separator (6) + grand total (18) + bottom (8)
+  const PANEL_H = 8 + grandRows.length * 9 + 6 + 20 + 8;
+  checkPage(PANEL_H + 16);
 
-  setFill(TOTAL_BG);
-  setDraw([224, 180, 110]);
-  pdf.setLineWidth(0.3);
-  pdf.roundedRect(MARGIN_L, y, CONTENT_W, panelH, 2, 2, "FD");
+  sectionHeading("GRAND TOTAL");
 
-  let rowY = y + 8;
-  totalRows.forEach(([label, value]) => {
-    pdf.setFontSize(8);
+  // Panel card
+  F(C_WHITE);
+  D(C_BORDER);
+  pdf.setLineWidth(0.25);
+  pdf.roundedRect(ML, y, CW, PANEL_H, 2, 2, "FD");
+
+  // Left navy accent strip (3mm wide, full height)
+  F(C_SLATE);
+  pdf.rect(ML, y, 3, PANEL_H, "F");
+
+  // Two-column line items
+  let ry = y + 10;
+  grandRows.forEach(([label, value]) => {
+    pdf.setFontSize(8.5);
+    pdf.setFont("helvetica", "normal");
+    T(C_BODY);
+    pdf.text(label, ML + 8, ry);
+
     pdf.setFont("helvetica", "bold");
-    setColor([17, 17, 17]);
-    pdf.text(label, MARGIN_L + 4, rowY);
-    pdf.text(value, MARGIN_L + CONTENT_W - 4, rowY, { align: "right" });
-    rowY += 8;
+    T(C_INK);
+    pdf.text(value, ML + CW - 6, ry, { align: "right" });
+    ry += 9;
   });
 
   // Dashed separator
-  pdf.setLineDashPattern([1, 1], 0);
-  setDraw([0, 0, 0]);
-  pdf.setLineWidth(0.2);
-  pdf.line(MARGIN_L + 4, rowY - 2, MARGIN_L + CONTENT_W - 4, rowY - 2);
+  pdf.setLineDashPattern([2, 1.5], 0);
+  D([185, 205, 220]);
+  pdf.setLineWidth(0.3);
+  pdf.line(ML + 8, ry, ML + CW - 8, ry);
   pdf.setLineDashPattern([], 0);
+  ry += 4;
 
+  // Grand total highlight band
+  F(C_ACCENT_L);
+  pdf.rect(ML + 3, ry, CW - 3, 18, "F");
+
+  // "FINAL GRAND TOTAL" label
   pdf.setFontSize(8);
   pdf.setFont("helvetica", "bold");
-  setColor(WARM);
-  pdf.text("FINAL GRAND TOTAL", MARGIN_L + 4, rowY + 6);
+  T(C_SLATE);
+  pdf.setCharSpace(1);
+  pdf.text("FINAL GRAND TOTAL", ML + 9, ry + 7);
+  pdf.setCharSpace(0);
 
-  pdf.setFontSize(14);
+  // Grand total value (large, prominent)
+  pdf.setFontSize(18);
   pdf.setFont("helvetica", "bold");
-  setColor(BLACK);
-  pdf.text(`Rs.${fmt(summary.grandTotal)}`, MARGIN_L + CONTENT_W - 4, rowY + 6.5, { align: "right" });
+  T(C_NAVY);
+  pdf.text(`Rs. ${fmt(summary.grandTotal)}`, ML + CW - 6, ry + 12, { align: "right" });
 
-  y += panelH + 6;
+  y += PANEL_H + 14; // 7 grid units gap
 
-  // ── NOTES ───────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // 6. NOTES
+  // ══════════════════════════════════════════════════════════════════════════
+
   const notes = [
-    "Floor Rise Charges:- Rs 50 Psf Per Floor From 7th Floor Onwards.",
-    "GST, Stamp Duty, Registration And Any Other Statutory Charges At Actuals.",
-    "Above Quotation Is For Internal Discussion Only.",
-    "MahaRERA no - P51700053764.",
-    "Maintenance Charges at the time of possession.",
+    "Floor Rise Charges: Rs. 50 per sq.ft per floor from the 7th floor onwards.",
+    "GST, Stamp Duty, Registration and any other statutory charges are at actuals.",
+    "The above quotation is for internal discussion only.",
+    "MahaRERA Registration No. P51700053764.",
+    "Maintenance charges are applicable at the time of possession.",
   ];
-  const notesH = 10 + notes.length * 7;
-  needPage(notesH + 4);
 
-  setFill(LIGHT_BG);
-  setDraw(BLACK);
-  pdf.setLineWidth(0.3);
-  pdf.rect(MARGIN_L, y, CONTENT_W, notesH, "FD");
+  const NOTE_H = 10;
+  const NOTES_PANEL_H = 10 + notes.length * NOTE_H + 4;
+  checkPage(NOTES_PANEL_H + 16);
 
-  pdf.setFontSize(10);
-  pdf.setFont("times", "bold");
-  setColor(BLACK);
-  pdf.text("NOTES:", PAGE_W / 2, y + 7, { align: "center" });
+  sectionHeading("NOTES & TERMS");
+
+  // Notes panel: light bg, no heavy border
+  F(C_BG);
+  D(C_BORDER);
   pdf.setLineWidth(0.2);
-  setDraw(BLACK);
-  pdf.line(MARGIN_L, y + 9, MARGIN_L + CONTENT_W, y + 9);
+  pdf.roundedRect(ML, y, CW, NOTES_PANEL_H, 2, 2, "FD");
 
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(7);
-  let noteY = y + 16;
+  let noteY = y + 10;
   notes.forEach((note, i) => {
-    pdf.text(`${i + 1}) ${note}`, MARGIN_L + 3, noteY);
+    // Circle badge with number
+    F(C_SLATE);
+    pdf.circle(ML + 9, noteY - 1.5, 2.8, "F");
+
+    pdf.setFontSize(7);
+    pdf.setFont("helvetica", "bold");
+    T(C_WHITE);
+    pdf.text(String(i + 1), ML + 9, noteY - 0.3, { align: "center" });
+
+    // Note text
+    pdf.setFontSize(8);
+    pdf.setFont("helvetica", "normal");
+    T(C_BODY);
+    const noteLines = pdf.splitTextToSize(note, CW - 20);
+    pdf.text(noteLines, ML + 15, noteY);
+
+    // Subtle divider (except last)
     if (i < notes.length - 1) {
+      D(C_BORDER);
       pdf.setLineWidth(0.15);
-      pdf.line(MARGIN_L, noteY + 3, MARGIN_L + CONTENT_W, noteY + 3);
+      pdf.line(ML + 6, noteY + 4, ML + CW - 6, noteY + 4);
     }
-    noteY += 7;
+    noteY += NOTE_H;
   });
 
-  y += notesH + 5;
+  y += NOTES_PANEL_H + 8;
 
-  // ── DISCLAIMER ──────────────────────────────────────────────────────────
-  needPage(14);
-  pdf.setFontSize(6.5);
+  // ══════════════════════════════════════════════════════════════════════════
+  // 7. DISCLAIMER FOOTER
+  // ══════════════════════════════════════════════════════════════════════════
+
+  checkPage(18);
+  D(C_BORDER);
+  pdf.setLineWidth(0.2);
+  pdf.line(ML, y, ML + CW, y);
+  y += 5;
+
+  pdf.setFontSize(7);
   pdf.setFont("helvetica", "normal");
-  setColor([51, 51, 51]);
+  T(C_CAPTION);
   const disclaimer =
-    "Disclaimer: All specifications, drawing, amenities, facilities, parameters, etc., shown in this brochure are subject to change as per the approval from the respective authorities. The final discretion remains with the developers.";
-  const disclaimerLines = pdf.splitTextToSize(disclaimer, CONTENT_W);
-  pdf.text(disclaimerLines, MARGIN_L, y);
+    "Disclaimer: All specifications, drawings, amenities, facilities, parameters, floor plans, etc., shown in " +
+    "this document are subject to change as per approvals from the respective authorities. The final discretion " +
+    "remains with the developers. This document is for internal discussion and reference purposes only and does " +
+    "not constitute a legal agreement.";
+  const dLines = pdf.splitTextToSize(disclaimer, CW);
+  pdf.text(dLines, ML, y);
 
-  // ── PAGE FOOTER ─────────────────────────────────────────────────────────
-  const totalPages = (pdf as jsPDF & { internal: { getNumberOfPages: () => number } }).internal.getNumberOfPages();
+  // ══════════════════════════════════════════════════════════════════════════
+  // 8. PAGE FOOTER (every page)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  const totalPages = (
+    pdf as jsPDF & { internal: { getNumberOfPages: () => number } }
+  ).internal.getNumberOfPages();
+
   for (let p = 1; p <= totalPages; p++) {
     pdf.setPage(p);
-    setDraw([180, 180, 180]);
-    pdf.setLineWidth(0.15);
-    pdf.line(MARGIN_L, PAGE_H - 8, PAGE_W - MARGIN_R, PAGE_H - 8);
-    pdf.setFontSize(6);
+
+    // Navy footer bar (8mm from bottom)
+    F(C_SLATE_D);
+    pdf.rect(0, PH - 8, PW, 8, "F");
+
+    pdf.setFontSize(6.5);
     pdf.setFont("helvetica", "normal");
-    setColor([130, 130, 130]);
-    pdf.text("Level23 - Premium Office Spaces, Vashi, Navi Mumbai", MARGIN_L, PAGE_H - 5);
-    pdf.text("www.level23.co.in", PAGE_W - MARGIN_R, PAGE_H - 5, { align: "right" });
+    T(C_WHITE);
+    pdf.text(
+      "Level23 - Premium Office Spaces, Vashi, Navi Mumbai",
+      ML,
+      PH - 3.5
+    );
+    pdf.text(
+      `www.level23.co.in   |   Page ${p} of ${totalPages}`,
+      PW - MR,
+      PH - 3.5,
+      { align: "right" }
+    );
   }
 
   return pdf.output("blob");
