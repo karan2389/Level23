@@ -1,4 +1,4 @@
-﻿/**
+/**
  * generateCostSheetPdf.ts
  *
  * Clean, minimal A4 cost sheet. Invoice/quotation style.
@@ -223,7 +223,7 @@ export async function generateCostSheetPdf(
     T(C_DARK);
     pdf.text(`${fmt(item.carpetArea)} sq.ft`, X1 + PAD, cy);
     pdf.text(`Rs. ${fmt(item.rate)}`, X2 + PAD, cy);
-    pdf.text(idx === 0 ? `Rs. ${fmt(summary.totalFloorRise)}` : "—", X3 + PAD, cy);
+    pdf.text(item.floorRise > 0 ? `Rs. ${fmt(item.floorRise)}` : "—", X3 + PAD, cy);
 
     // Agreement value (bold, right-aligned)
     pdf.setFont("helvetica", "bold");
