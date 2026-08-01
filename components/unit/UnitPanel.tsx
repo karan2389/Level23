@@ -43,6 +43,14 @@ export function UnitPanel({
     if (num) setFloorError(false);
   };
 
+  const validateFloorSelection = () => {
+    if (!selectedFloorNumber) {
+      setFloorError(true);
+      return false;
+    }
+    return true;
+  };
+
   return (
     <OverlayLayout onClose={onClose}>
       <OverlayHeader 
@@ -88,7 +96,7 @@ export function UnitPanel({
               </select>
               {floorError && (
                 <span className="office-floor-error" role="alert">
-                  <AlertCircle size={14} /> Please select a floor first
+                  <AlertCircle size={14} /> Please select a floor to proceed.
                 </span>
               )}
             </div>
@@ -120,10 +128,10 @@ export function UnitPanel({
 
       {/* Actions */}
       <StickyActionBar>
-        <button className="accent-button" type="button" onClick={() => { openEnquiry("floor-plan", "floor-plan", { floor: selectedFloorNumber, offices: [selectedOffice] }); }}>
+        <button className="accent-button" type="button" onClick={() => { if (validateFloorSelection()) openEnquiry("floor-plan", "floor-plan", { floor: selectedFloorNumber, offices: [selectedOffice] }); }}>
           Enquire Now <ArrowRight />
         </button>
-        <button className="outline-button" type="button" onClick={() => setShowCostSheet(true)} style={{ background: "white" }}>
+        <button className="outline-button" type="button" onClick={() => { if (validateFloorSelection()) setShowCostSheet(true); }} style={{ background: "white" }}>
           <FileText /> Cost Sheet
         </button>
         <a className="outline-button" href="/docs/monopoly-layout-plan.pdf" target="_blank" rel="noreferrer">
