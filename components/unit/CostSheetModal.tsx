@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Download, Building2, ArrowRight, Loader2 } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Office } from "@/types/unit";
 import { OfficeCostData } from "@/types/costs";
 import { calculateCostSheet } from "@/utils/costCalculator";
@@ -12,6 +10,7 @@ import { useEnquiry } from "@/providers/EnquiryProvider";
 import { OverlayLayout } from "../common/OverlayLayout";
 import { OverlayHeader } from "../common/OverlayHeader";
 import { StickyActionBar } from "../common/StickyActionBar";
+import { generateCostSheetPdf } from "@/utils/pdf/generateCostSheetPdf";
 
 interface CostSheetModalProps {
   selectedOffices: Office[];
@@ -64,21 +63,11 @@ export function CostSheetModal({
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
     try {
-      const element = document.getElementById("printable-cost-sheet");
-      if (!element) return;
-
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#faf7f2" });
-      const imgData = canvas.toDataURL("image/png");
-
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      // Generate structured PDF from calculated summary data (no DOM screenshots)
+      const blob = await generateCostSheetPdf(summary, selectedFloorNumber);
 
       const officeNumbers = summary.items.map((item) => item.unitNo).join("_");
       const filename = `Level23_Cost_Sheet_${officeNumbers || "Units"}.pdf`;
-      const blob = pdf.output("blob");
 
       const fallbackDownload = () => {
         const url = window.URL.createObjectURL(blob);
