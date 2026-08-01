@@ -24,10 +24,8 @@ export function BuildingScene({
   return (
     <section id="explorer" className="explorer-section section-screen">
       <div className="section-inner explorer-inner">
-        <LevelMark />
         <div className="section-title reveal">
-          <h2>3D Building Explorer</h2>
-          <p>Explore every level. Visualize your view.</p>
+          <h4>Explore every level. Visualize your view.</h4>
         </div>
 
         <div className="model-stage reveal">
