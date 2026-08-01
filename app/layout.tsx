@@ -10,7 +10,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#f8f3ed",
+  themeColor: "#e9eef2",
 };
 
 import { EnquiryProvider } from "@/providers/EnquiryProvider";
