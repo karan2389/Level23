@@ -73,8 +73,11 @@ export async function generateCostSheetPdf(
 ): Promise<Blob> {
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-  // Only the Level23 logo — document clarity over branding
-  const level23B64 = await fetchBase64("/images/logos/level23.png");
+  const [level23B64, aksharB64, bhagwatiB64] = await Promise.all([
+    fetchBase64("/images/logos/level23.png"),
+    fetchBase64("/images/logos/akshar.png"),
+    fetchBase64("/images/logos/bhagwati.png"),
+  ]);
 
   let y = 0;
 
@@ -113,21 +116,18 @@ export async function generateCostSheetPdf(
 
   y = 16;
 
-  // Level23 logo — left, height 16mm, width auto
-  if (level23B64) {
-    pdf.addImage(level23B64, "PNG", ML, y, 0, 16, undefined, "FAST");
+  // Left logos (Akshar & Bhagwati)
+  if (aksharB64) {
+    pdf.addImage(aksharB64, "PNG", ML, y, 25.5, 16, undefined, "FAST");
+  }
+  if (bhagwatiB64) {
+    pdf.addImage(bhagwatiB64, "PNG", ML + 25.5 + 4, y, 24.2, 16, undefined, "FAST");
   }
 
-  // Title block — right-aligned
-  pdf.setFontSize(22);
-  pdf.setFont("helvetica", "bold");
-  T(C_BLACK);
-  pdf.text("Cost Sheet", ML + CW, y + 7, { align: "right" });
-
-  pdf.setFontSize(8.5);
-  pdf.setFont("helvetica", "normal");
-  T(C_MID);
-  pdf.text("Official Estimate", ML + CW, y + 13, { align: "right" });
+  // Right logo (Level23)
+  if (level23B64) {
+    pdf.addImage(level23B64, "PNG", ML + CW - 64.3, y, 64.3, 16, undefined, "FAST");
+  }
 
   y += 20;
 
