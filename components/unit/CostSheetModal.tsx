@@ -432,7 +432,7 @@ export function CostSheetModal({
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 800 }}>{item.officeId}</td>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>₹{formatNumberIN(item.rate)}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>{idx === 0 ? `₹${formatNumberIN(summary.totalFloorRise)}` : "-"}</td>
+                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>{item.floorRise > 0 ? `₹${formatNumberIN(item.floorRise)}` : "-"}</td>
                       <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 900 }}>₹{formatNumberIN(item.basicCost)}</td>
                     </tr>
                   ))}
