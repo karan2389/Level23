@@ -133,7 +133,7 @@ export function CostSheetModal({
     <OverlayLayout onClose={onClose} zIndex={130}>
       <OverlayHeader title="Cost Sheet" onBack={onClose} onClose={onClose} />
 
-      <div className="premium-overlay-content" style={{ padding: 0, backgroundColor: "#faf7f2" }}>
+      <div className="premium-overlay-content cost-sheet-page-content" style={{ padding: 0, backgroundColor: "#faf7f2" }}>
         {/* Printable & Visible Cost Sheet Area */}
         <div
           id="printable-cost-sheet"
@@ -257,6 +257,17 @@ export function CostSheetModal({
                 }
               }
               @media (max-width: 767px) {
+                .cost-sheet-page-content {
+                  width: 100vw;
+                  max-width: none;
+                  min-height: 100dvh;
+                  margin: 0;
+                  border-radius: 0;
+                }
+                #printable-cost-sheet {
+                  min-height: 100dvh;
+                  padding-bottom: 11rem;
+                }
                 .cost-sheet-branding-desktop {
                   display: none;
                 }
@@ -392,7 +403,7 @@ export function CostSheetModal({
           {/* Main Content Body */}
           <div
             style={{
-              padding: "2rem 1.35rem 6rem",
+              padding: "2rem 1.35rem 12rem",
               width: "100%",
               boxSizing: "border-box",
               maxWidth: "1180px",
@@ -516,6 +527,29 @@ export function CostSheetModal({
                 <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(summary.grandTotal)}</strong>
               </div>
             </div>
+
+            {/* Notes & Disclaimer */}
+            <div style={{ marginTop: "1.25rem", border: "1px solid rgba(0,0,0,0.42)", backgroundColor: "#faf7f2", color: "#111111" }}>
+              <div style={{ padding: "0.45rem 0.75rem", textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.42)", fontFamily: "serif", fontSize: "1.35rem", fontWeight: 900, letterSpacing: "0.04em" }}>
+                NOTES:
+              </div>
+              {[
+                "Floor Rise Charges:- Rs 50 Psf Per Floor From 7th Floor Onwards.",
+                "GST, Stamp Duty, Registration And Any Other Statutory Charges At Actuals.",
+                "Above Quotation Is For Internal Discussion Only.",
+                "MahaRERA no - P51700053764.",
+                "Maintenance Charges at the time of possession.",
+              ].map((note, index) => (
+                <div key={note} style={{ display: "flex", gap: "0.45rem", padding: "0.42rem 0.75rem", borderBottom: index < 4 ? "1px solid rgba(0,0,0,0.42)" : "none", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "0.04em" }}>
+                  <span style={{ flex: "0 0 auto" }}>{index + 1})</span>
+                  <span>{note}</span>
+                </div>
+              ))}
+            </div>
+
+            <p style={{ margin: "0.8rem 0 0", fontSize: "0.72rem", lineHeight: 1.55, color: "#333333", fontWeight: 600 }}>
+              Disclaimer: Disclaimer: All specifications, drawing, amenities, facilities, parameters, etc., shown in this brochure are subject to change as per the approval from the respective authorities. The final discretion remains with the developers
+            </p>
           </div>
         </div>
       </div>
