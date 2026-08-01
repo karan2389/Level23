@@ -228,7 +228,7 @@ export async function generateCostSheetPdf(
     // Agreement value (bold, right-aligned)
     pdf.setFont("helvetica", "bold");
     T(C_BLACK);
-    pdf.text(`Rs. ${fmt(item.basicCost)}`, X4 + CW4 - PAD, cy, { align: "right" });
+    pdf.text(`Rs. ${fmt(item.totalSubtotal)}`, X4 + CW4 - PAD, cy, { align: "right" });
 
     y += ROW_H;
   });

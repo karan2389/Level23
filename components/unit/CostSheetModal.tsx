@@ -402,7 +402,7 @@ export function CostSheetModal({
             {/* Title Block */}
             <div style={{ marginBottom: "1.35rem" }}>
               <h1 style={{ fontSize: "1.45rem", fontWeight: 800, color: "#050505", margin: 0, letterSpacing: "-0.01em" }}>
-                Official Estimate Cost Sheet
+                Cost Sheet
               </h1>
               <p style={{ fontSize: "0.78rem", color: "#333333", margin: "0.85rem 0 0", fontWeight: 500 }}>
                 {summary.items.length} Selected Units · {selectedFloorNumber ? getOrdinalFloor(selectedFloorNumber) : "Typical Floors 7–22"}
@@ -433,7 +433,7 @@ export function CostSheetModal({
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>₹{formatNumberIN(item.rate)}</td>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>{item.floorRise > 0 ? `₹${formatNumberIN(item.floorRise)}` : "-"}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 900 }}>₹{formatNumberIN(item.basicCost)}</td>
+                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 900 }}>₹{formatNumberIN(item.totalSubtotal)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -518,6 +518,7 @@ export function CostSheetModal({
             </div>
 
             {/* Notes & Disclaimer */}
+            <h5 style={{ textAlign: "center", fontWeight: 900, letterSpacing: "0.04em" }}>(ONLY FOR VIEWING PURPOSE)</h5>
             <div style={{ marginTop: "1.25rem", border: "1px solid rgba(0,0,0,0.42)", backgroundColor: "#faf7f2", color: "#111111" }}>
               <div style={{ padding: "0.45rem 0.75rem", textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.42)", fontFamily: "serif", fontSize: "1.35rem", fontWeight: 900, letterSpacing: "0.04em" }}>
                 NOTES:
