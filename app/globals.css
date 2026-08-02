@@ -1925,9 +1925,11 @@ body::after {
   transition: box-shadow 0.25s ease, background 0.25s ease;
 }
 
-.scroll-indicator:hover .scroll-indicator__circle {
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 6px 24px rgba(184, 111, 76, 0.22);
+@media (hover: hover) {
+  .scroll-indicator:hover .scroll-indicator__circle {
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 6px 24px rgba(184, 111, 76, 0.22);
+  }
 }
 
 .scroll-indicator__sub {
@@ -2016,9 +2018,11 @@ body::after {
   transform: scale(1.4);
 }
 
-.scroll-progress-dot:hover .scroll-progress-circle {
-  transform: scale(1.6);
-  border-color: var(--ink);
+@media (hover: hover) {
+  .scroll-progress-dot:hover .scroll-progress-circle {
+    transform: scale(1.6);
+    border-color: var(--ink);
+  }
 }
 
 .scroll-progress-tooltip {
@@ -2049,7 +2053,7 @@ body::after {
   border-color: transparent transparent transparent var(--ink);
 }
 
-@media (min-width: 768px) {
+@media (hover: hover) and (min-width: 768px) {
   .scroll-progress-dot:hover .scroll-progress-tooltip,
   .scroll-progress-dot.active:hover .scroll-progress-tooltip {
     opacity: 1;
