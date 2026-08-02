@@ -11,6 +11,7 @@ import { OverlayLayout } from "../common/OverlayLayout";
 import { OverlayHeader } from "../common/OverlayHeader";
 import { StickyActionBar } from "../common/StickyActionBar";
 import { generateCostSheetPdf } from "@/utils/pdf/generateCostSheetPdf";
+import { formatUnitNumber } from "@/utils/officeUtils";
 
 interface CostSheetModalProps {
   selectedOffices: Office[];
@@ -426,7 +427,7 @@ export function CostSheetModal({
                 <tbody>
                   {summary.items.map((item, idx) => (
                     <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", color: "#050505" }}>
-                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 800 }}>{item.officeId}</td>
+                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 800 }}>{formatUnitNumber(item.floor || selectedFloorNumber, item.officeId)}</td>
                       <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
                     </tr>
                   ))}

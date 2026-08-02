@@ -8,6 +8,7 @@
 
 import jsPDF from "jspdf";
 import { CostSheetSummary } from "@/types/costs";
+import { formatUnitNumber } from "@/utils/officeUtils";
 
 // ── Utilities ───────────────────────────────────────────────────────────────
 
@@ -198,7 +199,7 @@ export async function generateCostSheetPdf(
     pdf.setFontSize(9);
     pdf.setFont("helvetica", "bold");
     T(C_BLACK);
-    pdf.text(`Unit ${item.officeId}`, X0 + PAD, cy);
+    pdf.text(`Unit ${formatUnitNumber(item.floor || selectedFloorNumber, item.officeId)}`, X0 + PAD, cy);
 
     // Other data columns (normal)
     pdf.setFont("helvetica", "normal");
