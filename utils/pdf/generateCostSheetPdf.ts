@@ -228,7 +228,7 @@ export async function generateCostSheetPdf(
     ["GST", `Rs. ${fmt(summary.totalGst)}`],
     ["Stamp Duty", `Rs. ${fmt(summary.totalStampDuty)}`],
     ["Registration", `Rs. ${fmt(summary.totalRegistration)}`],
-    ["Car Parking", `${summary.items.length * 2} Nos. (Included)`],
+    ["Car Parking", `${summary.items.length} Nos. (Included)`],
   ];
 
   checkPage(summaryRows.length * 8 + 24);
