@@ -1872,3 +1872,92 @@ body::after {
   .enquiry-office-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .enquiry-office-checkbox { height: 44px; font-size: 0.85rem; padding: 0 8px; }
 }
+
+/* ─── Scroll Indicator ───────────────────────────────────────────────────── */
+
+.scroll-indicator {
+  position: fixed;
+  bottom: clamp(24px, 4vh, 44px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  color: var(--muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.scroll-indicator--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.scroll-indicator__label {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.scroll-indicator__circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(184, 111, 76, 0.45);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  box-shadow: 0 4px 20px rgba(184, 111, 76, 0.14), 0 1px 4px rgba(0, 0, 0, 0.06);
+  animation: scrollIndicatorFloat 2.6s ease-in-out infinite;
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.scroll-indicator:hover .scroll-indicator__circle {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 24px rgba(184, 111, 76, 0.22);
+}
+
+.scroll-indicator__sub {
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+@keyframes scrollIndicatorFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+.scroll-indicator:not(.scroll-indicator--visible) .scroll-indicator__circle {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-indicator__circle { animation: none; }
+  .scroll-indicator { transition: opacity 0.3s ease; }
+}
+
+@media (max-width: 640px) {
+  .scroll-indicator {
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  }
+  .scroll-indicator__circle { width: 40px; height: 40px; }
+  .scroll-indicator__label,
+  .scroll-indicator__sub { font-size: 0.6rem; }
+}
+

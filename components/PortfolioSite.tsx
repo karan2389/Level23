@@ -13,6 +13,7 @@ import { MultiOfficeSummary } from "@/components/unit/MultiOfficeSummary";
 import { initScrollAnimations } from "@/animations/scroll";
 import { offices } from "@/data/units";
 import { useEnquiry } from "@/providers/EnquiryProvider";
+import { useSectionSnap } from "@/hooks/useSectionSnap";
 import type { FloorGroupId } from "@/types/floor";
 import type { Office } from "@/types/unit";
 
@@ -22,7 +23,7 @@ function scrollToId(id: string) {
 
 export default function PortfolioSite() {
   const root = useRef<HTMLElement>(null);
-  const { openEnquiry } = useEnquiry();
+  const { openEnquiry, isOpen: enquiryOpen } = useEnquiry();
   
   // State for Navigation
   const [menuOpen, setMenuOpen] = useState(false);
@@ -40,6 +41,10 @@ export default function PortfolioSite() {
   const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [multiSelectedOffices, setMultiSelectedOffices] = useState<Office[]>([]);
   const [summaryPopupOpen, setSummaryPopupOpen] = useState(false);
+
+  // Disable section-snap whenever any overlay/modal is open
+  const isModalOpen = menuOpen || officePopupOpen || summaryPopupOpen || enquiryOpen;
+  useSectionSnap({ modalOpen: isModalOpen });
 
   useEffect(() => {
     const ctx = initScrollAnimations(root);

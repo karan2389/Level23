@@ -1,8 +1,11 @@
 import Image from "next/image";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LevelMark } from "@/components/common/LevelMark";
+import { ScrollIndicator, useScrollIndicatorVisible } from "@/components/common/ScrollIndicator";
 
 export function HeroSection({ scrollToId }: { scrollToId: (id: string) => void }) {
+  const indicatorVisible = useScrollIndicatorVisible("hero");
+
   return (
     <section id="hero" className="hero-section section-screen">
       <div className="hero-image-wrap">
@@ -28,11 +31,12 @@ export function HeroSection({ scrollToId }: { scrollToId: (id: string) => void }
         </button>
       </div>
 
-      <button className="hero-swipe-cue" type="button" onClick={() => scrollToId("explorer")}>
-        <span className="hero-swipe-icon"><ArrowDown size={24} /></span>
-        <strong>Swipe up</strong>
-        <small>Scroll to explore</small>
-      </button>
+      <ScrollIndicator
+        nextSectionId="explorer"
+        label="Scroll Down"
+        subLabel="Scroll to Explore"
+        visible={indicatorVisible}
+      />
     </section>
   );
 }

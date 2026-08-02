@@ -9,6 +9,7 @@ import { floorGroups } from "@/data/floors";
 import { offices } from "@/data/units";
 import type { FloorGroupId } from "@/types/floor";
 import type { Office } from "@/types/unit";
+import { ScrollIndicator, useScrollIndicatorVisible } from "@/components/common/ScrollIndicator";
 
 export function PlanViewer({
   activePlan,
@@ -39,6 +40,7 @@ export function PlanViewer({
     () => floorGroups.find((floor) => floor.id === activePlan) ?? floorGroups[4],
     [activePlan]
   );
+  const indicatorVisible = useScrollIndicatorVisible("floor-plan");
 
   const isMultiSelected = (office: Office) =>
     multiSelectedOffices.some((o) => o.id === office.id);
@@ -178,6 +180,13 @@ export function PlanViewer({
           </div>
         )}
       </div>
+
+      <ScrollIndicator
+        nextSectionId="interiors"
+        label="Scroll Down"
+        subLabel="Scroll to Explore"
+        visible={indicatorVisible}
+      />
     </section>
   );
 }
