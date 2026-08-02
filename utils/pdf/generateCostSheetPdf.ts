@@ -161,42 +161,24 @@ export async function generateCostSheetPdf(
   sectionHead("Cost Sheet");
 
   // Column widths (must total CW = 178mm)
-  // Unit | Carpet Area | Rate psf | Floor Rise | Agreement Value
-  const CW0 = 22, CW1 = 42, CW2 = 36, CW3 = 36, CW4 = CW - CW0 - CW1 - CW2 - CW3; // 42mm
+  // Unit | Carpet Area
+  const CW0 = 42, CW1 = CW - CW0;
   const X0 = ML;
-  const X1 = X0 + CW0;
-  const X2 = X1 + CW1;
-  const X3 = X2 + CW2;
-  const X4 = X3 + CW3;
-
-  const HDRS = ["Unit", "Carpet Area", "Rate (psf)", "Floor Rise", "Agreement Value"];
+  const X1 = ML + CW0;
+  const HDRS = ["Unit", "Carpet Area"];
   const TH_H = 9;
   const ROW_H = 9;
-  const PAD = 3; // left padding inside cell
+  const PAD = 3;
 
-  // Table header
   F(C_THBG);
   pdf.rect(ML, y, CW, TH_H, "F");
-  rule(y, C_LIGHT, 0.2);
-  rule(y + TH_H, C_LIGHT, 0.2);
 
-  [
-    [X0 + PAD, HDRS[0], false],
-    [X1 + PAD, HDRS[1], false],
-    [X2 + PAD, HDRS[2], false],
-    [X3 + PAD, HDRS[3], false],
-    [X4 + CW4 - PAD, HDRS[4], true],
-  ].forEach(([x, h, right]) => {
-    pdf.setFontSize(8);
-    pdf.setFont("helvetica", "bold");
-    T(C_DARK);
-    pdf.text(
-      h as string,
-      x as number,
-      y + 6,
-      right ? { align: "right" } : {}
-    );
-  });
+  pdf.setFontSize(8);
+  pdf.setFont("helvetica", "bold");
+  T(C_DARK);
+  pdf.text(HDRS[0], X0 + PAD, y + 6);
+  pdf.text(HDRS[1], X1 + CW1 - PAD, y + 6, { align: "right" });
+
   y += TH_H;
 
   // Data rows
@@ -221,14 +203,7 @@ export async function generateCostSheetPdf(
     // Other data columns (normal)
     pdf.setFont("helvetica", "normal");
     T(C_DARK);
-    pdf.text(`${fmt(item.carpetArea)} sq.ft`, X1 + PAD, cy);
-    pdf.text(`Rs. ${fmt(item.rate)}`, X2 + PAD, cy);
-    pdf.text(item.floorRise > 0 ? `Rs. ${fmt(item.floorRise)}` : "—", X3 + PAD, cy);
-
-    // Agreement value (bold, right-aligned)
-    pdf.setFont("helvetica", "bold");
-    T(C_BLACK);
-    pdf.text(`Rs. ${fmt(item.totalSubtotal)}`, X4 + CW4 - PAD, cy, { align: "right" });
+    pdf.text(`${fmt(item.carpetArea)} sq.ft`, X1 + CW1 - PAD, cy, { align: "right" });
 
     y += ROW_H;
   });
@@ -239,22 +214,20 @@ export async function generateCostSheetPdf(
 
   // ════════════════════════════════════════════════════════════════════════
   // 3. SUMMARY
-  // ════════════════════════════════════════════════════════════════════════
-
-  const otherFees = summary.totalOtherCharges + summary.totalDevelopment +
-    summary.totalLegal + summary.totalSocietyFormation + summary.totalRecreational;
+  const calculatedBasicCost = summary.totalBasicCost + summary.totalFloorRise;
   const elecDeposit = summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000;
-  const maintenance = summary.totalCarpetArea * 100;
+  const calculatedGrandTotal = calculatedBasicCost + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + elecDeposit + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration;
 
   const summaryRows: [string, string][] = [
     ["Total Carpet Area",           `${fmt(summary.totalCarpetArea)} sq.ft`],
-    ["Total Agreement Value",       `Rs. ${fmt(summary.totalSubtotal)}`],
-    ["Floor Rise",                  `Rs. ${fmt(summary.totalFloorRise)}`],
+    ["Basic Cost",                  `Rs. ${fmt(calculatedBasicCost)}`],
     ["Development Charges",         `Rs. ${fmt(summary.totalDevelopment)}`],
-    ["Other Charges (FSI / IFMS / Legal)", `Rs. ${fmt(otherFees)}`],
+    ["Legal & Society Formation Charges", `Rs. ${fmt(summary.totalLegal + summary.totalSocietyFormation)}`],
+    ["DG Backup",                   `Rs. ${fmt(elecDeposit)}`],
+    ["Recreational Charges",        `Rs. ${fmt(summary.totalRecreational)}`],
     ["GST",                         `Rs. ${fmt(summary.totalGst)}`],
-    ["Maintenance",                 `Rs. ${fmt(maintenance)}`],
-    ["Electricity & Water Deposit", `Rs. ${fmt(elecDeposit)}`],
+    ["Stamp Duty",                  `Rs. ${fmt(summary.totalStampDuty)}`],
+    ["Registration",                `Rs. ${fmt(summary.totalRegistration)}`],
     ["Car Parking",                 `${summary.items.length * 2} Nos. (Included)`],
   ];
 
@@ -299,12 +272,12 @@ export async function generateCostSheetPdf(
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "normal");
   T(C_MID);
-  pdf.text("All-inclusive estimate (excl. stamp duty & registration)", ML + PAD, y + 5);
+  pdf.text("GRAND TOTAL", ML + PAD, y + 7);
 
   pdf.setFontSize(24);
   pdf.setFont("helvetica", "bold");
   T(C_BLUE);
-  pdf.text(`Rs. ${fmt(summary.grandTotal)}`, ML + CW - PAD, y + 7, { align: "right" });
+  pdf.text(`Rs. ${fmt(calculatedGrandTotal)}`, ML + CW - PAD, y + 7, { align: "right" });
 
   y += 18;
   rule(y, C_RULE, 0.2);

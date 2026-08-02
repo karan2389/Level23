@@ -420,20 +420,14 @@ export function CostSheetModal({
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.18)", color: "#111111", fontWeight: 800 }}>
                     <th style={{ padding: "0.85rem 0.65rem" }}>Unit No</th>
-                    <th style={{ padding: "0.85rem 0.65rem" }}>Carpet Area</th>
-                    <th style={{ padding: "0.85rem 0.65rem" }}>Rate</th>
-                    <th style={{ padding: "0.85rem 0.65rem" }}>Floor Rise</th>
-                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Agreement Value</th>
+                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Carpet Area</th>
                   </tr>
                 </thead>
                 <tbody>
                   {summary.items.map((item, idx) => (
                     <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", color: "#050505" }}>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 800 }}>{item.officeId}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
-                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>₹{formatNumberIN(item.rate)}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", fontWeight: 700 }}>{item.floorRise > 0 ? `₹${formatNumberIN(item.floorRise)}` : "-"}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 900 }}>₹{formatNumberIN(item.totalSubtotal)}</td>
+                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
                     </tr>
                   ))}
                 </tbody>
@@ -458,32 +452,8 @@ export function CostSheetModal({
                 <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>{formatNumberIN(summary.totalCarpetArea)} sq.ft</strong>
               </div>
               <div>
-                <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Basic Cost</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>₹{formatNumberIN(summary.totalBasicCost)}</strong>
-              </div>
-              <div>
-                <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Total Floor Rise</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>₹{formatNumberIN(summary.totalFloorRise)}</strong>
-              </div>
-              <div>
-                <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Development Charges</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>₹{formatNumberIN(summary.totalDevelopment)}</strong>
-              </div>
-              <div>
-                <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Legal & Society Form.</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>₹{formatNumberIN(summary.totalLegal + summary.totalSocietyFormation + summary.totalRecreational)}</strong>
-              </div>
-              <div>
-                <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Other Charges</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>₹{formatNumberIN(summary.totalOtherCharges)}</strong>
-              </div>
-              <div>
-                <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Electricity & Water Deposit</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>₹{formatNumberIN(summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000)}</strong>
-              </div>
-              <div>
                 <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Car Park</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>{summary.items.length * 2} Nos. (Included)</strong>
+                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>{summary.items.length} Nos. (Included)</strong>
               </div>
             </div>
 
@@ -497,23 +467,34 @@ export function CostSheetModal({
               }}
             >
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "0.6rem 1rem", alignItems: "center", fontSize: "0.82rem", color: "#111111" }}>
-                <span style={{ fontWeight: 700 }}>Total Agreement Value</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalSubtotal)}</strong>
+                <span style={{ fontWeight: 700 }}>Basic Cost</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalBasicCost + summary.totalFloorRise)}</strong>
+
+                <span style={{ fontWeight: 700 }}>Development Charges</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalDevelopment)}</strong>
+
+                <span style={{ fontWeight: 700 }}>Legal & Society Formation Charges</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalLegal + summary.totalSocietyFormation)}</strong>
+
+                <span style={{ fontWeight: 700 }}>DG Backup </span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000)}</strong>
+
+                <span style={{ fontWeight: 700 }}>Recreational Charges</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRecreational)}</strong>
+
                 <span style={{ fontWeight: 700 }}>GST</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalGst)}</strong>
-                <span style={{ fontWeight: 700 }}>Maintenance</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalCarpetArea * 100)}</strong>
-                <span style={{ fontWeight: 700 }}>Other Charges / FSI / IFMS / Legal</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalOtherCharges + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + summary.totalRecreational)}</strong>
-                <span style={{ fontWeight: 700 }}>Electricity & Water Deposit</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000)}</strong>
-                <span style={{ fontWeight: 700 }}>Car Park</span>
-                <strong style={{ fontWeight: 900 }}>{summary.items.length * 2} Nos. (Included)</strong>
+
+                <span style={{ fontWeight: 700 }}>Stamp Duty</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalStampDuty)}</strong>
+
+                <span style={{ fontWeight: 700 }}>Registration</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRegistration)}</strong>
               </div>
 
               <div style={{ borderTop: "1px dashed rgba(0,0,0,0.22)", marginTop: "0.85rem", paddingTop: "0.85rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem" }}>
-                <span style={{ color: "#8a551c", fontSize: "0.86rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>Final Grand Total</span>
-                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(summary.grandTotal)}</strong>
+                <span style={{ color: "#8a551c", fontSize: "0.86rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>Grand Total</span>
+                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN((summary.totalBasicCost + summary.totalFloorRise) + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + (summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000) + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration)}</strong>
               </div>
             </div>
 
