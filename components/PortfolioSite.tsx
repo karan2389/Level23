@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/common/Header";
+import { Layers } from "lucide-react";
 import { HeroSection } from "@/components/hero/HeroSection";
 import { BuildingScene } from "@/components/building/BuildingScene";
 import { PlanViewer } from "@/components/unit/PlanViewer";
@@ -149,6 +150,35 @@ export default function PortfolioSite() {
           onClose={() => setSummaryPopupOpen(false)}
           onSelectMore={handleSelectMoreFromSummary}
         />
+      )}
+
+      {multiSelectMode && activePlan === "offices" && (
+        <div className={`multi-select-toolbar-relocated ${multiSelectedOffices.length > 0 ? "visible" : ""}`} role="toolbar" aria-label="Multi-office selection controls">
+          <div className="multi-select-toolbar-count">
+            <Layers size={20} aria-hidden="true" />
+            <span>
+              <strong>{multiSelectedOffices.length}</strong>{" "}
+              {multiSelectedOffices.length === 1 ? "Office" : "Offices"} Selected
+            </span>
+          </div>
+          <div className="multi-select-toolbar-actions">
+            <button
+              type="button"
+              className="multi-select-cancel-btn"
+              onClick={handleCancelMultiSelect}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="multi-select-done-btn"
+              onClick={handleDoneMultiSelect}
+              disabled={multiSelectedOffices.length === 0}
+            >
+              Done – Show selected
+            </button>
+          </div>
+        </div>
       )}
 
       <ScrollProgress />

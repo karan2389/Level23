@@ -129,35 +129,7 @@ export function PlanViewer({
               </div>
             </PanZoomViewport>
           )}
-          {/* Relocated action bar directly beneath the floor plan viewport, inside the card */}
-          {multiSelectMode && activePlan === "offices" && (
-            <div className={`multi-select-toolbar-relocated ${multiSelectedOffices.length > 0 ? "visible" : ""}`} role="toolbar" aria-label="Multi-office selection controls">
-              <div className="multi-select-toolbar-count">
-                <Layers size={20} aria-hidden="true" />
-                <span>
-                  <strong>{multiSelectedOffices.length}</strong>{" "}
-                  {multiSelectedOffices.length === 1 ? "Office" : "Offices"} Selected
-                </span>
-              </div>
-              <div className="multi-select-toolbar-actions">
-                <button
-                  type="button"
-                  className="multi-select-cancel-btn"
-                  onClick={onCancelMultiSelect}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="multi-select-done-btn"
-                  onClick={onDoneMultiSelect}
-                  disabled={multiSelectedOffices.length === 0}
-                >
-                  Done – Show selected
-                </button>
-              </div>
-            </div>
-          )}
+
 
           <div className="plan-legend">
             <span><i className="office-color" /> Office</span>

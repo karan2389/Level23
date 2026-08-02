@@ -294,15 +294,15 @@ export function CostSheetModal({
                   src="/images/logos/akshar.png"
                   alt="Akshar"
                   className="object-contain"
-                  style={{ height: "36px", width: "auto" }}
+                  style={{ height: "48px", width: "auto" }}
                   crossOrigin="anonymous"
                 />
-                <div className="bg-black/15" style={{ height: "24px", width: "1px" }} />
+                <div className="bg-black/15" style={{ height: "32px", width: "1px" }} />
                 <img
                   src="/images/logos/bhagwati.png"
                   alt="Bhagwati"
                   className="object-contain"
-                  style={{ height: "36px", width: "auto" }}
+                  style={{ height: "48px", width: "auto" }}
                   crossOrigin="anonymous"
                 />
               </div>
@@ -346,15 +346,15 @@ export function CostSheetModal({
                     src="/images/logos/akshar.png"
                     alt="Akshar"
                     className="object-contain"
-                    style={{ height: "23px", width: "auto", maxWidth: "68px", flexShrink: 1 }}
+                    style={{ height: "30px", width: "auto", maxWidth: "90px", flexShrink: 1 }}
                     crossOrigin="anonymous"
                   />
-                  <div className="bg-black/15 shrink-0" style={{ height: "20px", width: "1px" }} />
+                  <div className="bg-black/15 shrink-0" style={{ height: "24px", width: "1px" }} />
                   <img
                     src="/images/logos/bhagwati.png"
                     alt="Bhagwati"
                     className="object-contain"
-                    style={{ height: "23px", width: "auto", maxWidth: "72px", flexShrink: 1 }}
+                    style={{ height: "30px", width: "auto", maxWidth: "96px", flexShrink: 1 }}
                     crossOrigin="anonymous"
                   />
                 </div>
