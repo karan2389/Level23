@@ -225,8 +225,8 @@ export async function generateCostSheetPdf(
     ["Legal & Society Formation Charges", `Rs. ${fmt(summary.totalLegal + summary.totalSocietyFormation)}`],
     ["DG Backup", `Rs. ${fmt(elecDeposit)}`],
     ["Recreational Charges", `Rs. ${fmt(summary.totalRecreational)}`],
-    ["GST", `Rs. ${fmt(summary.totalGst)}`],
-    ["Stamp Duty", `Rs. ${fmt(summary.totalStampDuty)}`],
+    ["GST (12%)", `Rs. ${fmt(summary.totalGst)}`],
+    ["Stamp Duty (6%)", `Rs. ${fmt(summary.totalStampDuty)}`],
     ["Registration", `Rs. ${fmt(summary.totalRegistration)}`],
     ["Car Parking", `${summary.items.length} Nos. (Included)`],
   ];

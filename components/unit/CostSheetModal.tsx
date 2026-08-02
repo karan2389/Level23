@@ -482,10 +482,10 @@ export function CostSheetModal({
                 <span style={{ fontWeight: 700 }}>Recreational Charges</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRecreational)}</strong>
 
-                <span style={{ fontWeight: 700 }}>GST</span>
+                <span style={{ fontWeight: 700 }}>GST (12%)</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalGst)}</strong>
 
-                <span style={{ fontWeight: 700 }}>Stamp Duty</span>
+                <span style={{ fontWeight: 700 }}>Stamp Duty (6%)</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalStampDuty)}</strong>
 
                 <span style={{ fontWeight: 700 }}>Registration</span>
