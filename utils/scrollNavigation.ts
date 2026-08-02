@@ -1,25 +1,15 @@
 /**
  * scrollNavigation.ts
  *
- * Shared section order and GSAP-powered scroll utility.
- * Single source of truth for section IDs used by useSectionSnap and ScrollIndicator.
+ * Utility for determining current section and scrolling to specific sections.
+ * Powered by Lenis for ultra-smooth cinematic scrolling.
  */
 
-import { gsap } from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { lenisScrollTo } from "@/hooks/useLenis";
+import { SECTION_IDS, type SectionId } from "./scrollConfig";
 
-gsap.registerPlugin(ScrollToPlugin);
-
-/** Ordered list of section IDs on the page. */
-export const SECTION_IDS = [
-  "hero",
-  "explorer",
-  "floor-plan",
-  "interiors",
-  "location",
-] as const;
-
-export type SectionId = (typeof SECTION_IDS)[number];
+export { SECTION_IDS };
+export type { SectionId };
 
 /** Returns the index of the section whose top is nearest the current scroll position. */
 export function getCurrentSectionIndex(): number {
@@ -42,44 +32,22 @@ export function getCurrentSectionIndex(): number {
   return closestIndex;
 }
 
-/** Smoothly scrolls to a section by index using GSAP ScrollToPlugin. */
+/** Smoothly scrolls to a section by index. */
 export function scrollToSectionByIndex(
   index: number,
-  duration = 0.85,
-  ease = "power3.out"
+  duration = 1.1
 ): void {
   const id = SECTION_IDS[index];
   if (!id) return;
-  const el = document.getElementById(id);
-  if (!el) return;
-  const scrollY = window.scrollY;
-  const target = el.getBoundingClientRect().top + scrollY;
-
-  gsap.to(window, {
-    scrollTo: { y: target, autoKill: false },
-    duration,
-    ease,
-    overwrite: true,
-  });
+  lenisScrollTo(id, duration);
 }
 
 /** Smoothly scrolls to a section by its string ID. */
 export function scrollToSectionById(
   id: string,
-  duration = 0.85,
-  ease = "power3.out"
+  duration = 1.1
 ): void {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const scrollY = window.scrollY;
-  const target = el.getBoundingClientRect().top + scrollY;
-
-  gsap.to(window, {
-    scrollTo: { y: target, autoKill: false },
-    duration,
-    ease,
-    overwrite: true,
-  });
+  lenisScrollTo(id, duration);
 }
 
 /** Given a section ID, returns the ID of the next section, or null if last. */

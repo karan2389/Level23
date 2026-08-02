@@ -13,12 +13,13 @@ import { MultiOfficeSummary } from "@/components/unit/MultiOfficeSummary";
 import { initScrollAnimations } from "@/animations/scroll";
 import { offices } from "@/data/units";
 import { useEnquiry } from "@/providers/EnquiryProvider";
-import { useSectionSnap } from "@/hooks/useSectionSnap";
+import { useLenis, lenisScrollTo } from "@/hooks/useLenis";
+import { ScrollProgress } from "@/components/common/ScrollProgress";
 import type { FloorGroupId } from "@/types/floor";
 import type { Office } from "@/types/unit";
 
 function scrollToId(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  lenisScrollTo(id);
 }
 
 export default function PortfolioSite() {
@@ -44,7 +45,7 @@ export default function PortfolioSite() {
 
   // Disable section-snap whenever any overlay/modal is open
   const isModalOpen = menuOpen || officePopupOpen || summaryPopupOpen || enquiryOpen;
-  useSectionSnap({ modalOpen: isModalOpen });
+  useLenis({ modalOpen: isModalOpen });
 
   useEffect(() => {
     const ctx = initScrollAnimations(root);
@@ -149,6 +150,8 @@ export default function PortfolioSite() {
           onSelectMore={handleSelectMoreFromSummary}
         />
       )}
+
+      <ScrollProgress />
     </main>
   );
 }

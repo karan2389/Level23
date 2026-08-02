@@ -12,7 +12,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { scrollToSectionById } from "@/utils/scrollNavigation";
+import { lenisScrollTo } from "@/hooks/useLenis";
 
 interface ScrollIndicatorProps {
   /** ID of the next section to scroll to when clicked. */
@@ -32,7 +32,7 @@ export function ScrollIndicator({
   visible,
 }: ScrollIndicatorProps) {
   const handleClick = () => {
-    scrollToSectionById(nextSectionId, 0.85, "power3.out");
+    lenisScrollTo(nextSectionId);
   };
 
   return (
