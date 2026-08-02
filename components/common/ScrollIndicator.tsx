@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { lenisScrollTo } from "@/hooks/useLenis";
 
 interface ScrollIndicatorProps {
@@ -23,6 +23,8 @@ interface ScrollIndicatorProps {
   subLabel?: string;
   /** Whether the indicator should currently be visible. */
   visible: boolean;
+  /** Direction of the chevron icon (defaults to "down"). */
+  direction?: "up" | "down";
 }
 
 export function ScrollIndicator({
@@ -30,6 +32,7 @@ export function ScrollIndicator({
   label = "Scroll Down",
   subLabel = "Scroll to Explore",
   visible,
+  direction = "down",
 }: ScrollIndicatorProps) {
   const handleClick = () => {
     lenisScrollTo(nextSectionId);
@@ -44,7 +47,7 @@ export function ScrollIndicator({
     >
       <span className="scroll-indicator__label">{label}</span>
       <span className="scroll-indicator__circle">
-        <ChevronDown size={22} strokeWidth={2} />
+        {direction === "up" ? <ChevronUp size={22} strokeWidth={2} /> : <ChevronDown size={22} strokeWidth={2} />}
       </span>
       <span className="scroll-indicator__sub">{subLabel}</span>
     </button>

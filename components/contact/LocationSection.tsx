@@ -13,8 +13,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { LevelMark } from "@/components/common/LevelMark";
+import { ScrollIndicator, useScrollIndicatorVisible } from "@/components/common/ScrollIndicator";
 
 export function LocationSection({ onNotice }: { onNotice: () => void }) {
+  const indicatorVisible = useScrollIndicatorVisible("location");
   return (
     <section id="location" className="location-section section-screen">
       <div className="section-inner location-inner">
@@ -91,6 +93,14 @@ export function LocationSection({ onNotice }: { onNotice: () => void }) {
           </div>
         </footer>
       </div>
+
+      <ScrollIndicator
+        nextSectionId="hero"
+        label="Back To Top"
+        subLabel="Scroll To Top"
+        visible={indicatorVisible}
+        direction="up"
+      />
     </section>
   );
 }
