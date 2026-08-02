@@ -519,7 +519,9 @@ export function CostSheetModal({
             </div>
 
             <p style={{ margin: "0.8rem 0 0", fontSize: "0.72rem", lineHeight: 1.55, color: "#333333", fontWeight: 600 }}>
-              Disclaimer: Disclaimer: All specifications, drawing, amenities, facilities, parameters, etc., shown in this brochure are subject to change as per the approval from the respective authorities. The final discretion remains with the developers
+              Disclaimer: This cost sheet is provided solely for preliminary information and discussion purposes. The prices, offers, payment terms, and commercial conditions mentioned herein are indicative and non-binding. Final pricing and commercial negotiations will be conducted exclusively at our site office and shall be confirmed only through the final booking application and agreement.
+
+              The developer reserves the right to revise prices, offers, inventory availability, specifications, and terms without prior notice.
             </p>
           </div>
         </div>

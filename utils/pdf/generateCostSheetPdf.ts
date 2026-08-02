@@ -55,15 +55,15 @@ const CW = PW - ML - MR; // 178mm content width
 
 // Colors
 type RGB = [number, number, number];
-const C_BLACK:  RGB = [17,  17,  17];
-const C_DARK:   RGB = [60,  60,  60];
-const C_MID:    RGB = [120, 120, 120];
-const C_LIGHT:  RGB = [195, 195, 195];
-const C_RULE:   RGB = [220, 220, 220];
-const C_BLUE:   RGB = [67,  90,  115]; // #435A73
+const C_BLACK: RGB = [17, 17, 17];
+const C_DARK: RGB = [60, 60, 60];
+const C_MID: RGB = [120, 120, 120];
+const C_LIGHT: RGB = [195, 195, 195];
+const C_RULE: RGB = [220, 220, 220];
+const C_BLUE: RGB = [67, 90, 115]; // #435A73
 const C_ROWALT: RGB = [249, 250, 252];
-const C_THBG:   RGB = [242, 244, 247];
-const C_WHITE:  RGB = [255, 255, 255];
+const C_THBG: RGB = [242, 244, 247];
+const C_WHITE: RGB = [255, 255, 255];
 
 // ── Main export ─────────────────────────────────────────────────────────────
 
@@ -145,9 +145,9 @@ export async function generateCostSheetPdf(
   T(C_DARK);
 
   // Two columns: left half and right half
-  const leftMeta  = `Date: ${getFormattedDate()}     Floor: ${floorLabel}`;
+  const leftMeta = `Date: ${getFormattedDate()}     Floor: ${floorLabel}`;
   const rightMeta = `Units: ${summary.items.length}     MahaRERA: P51700053764`;
-  pdf.text(leftMeta,  ML, y);
+  pdf.text(leftMeta, ML, y);
   pdf.text(rightMeta, ML + CW, y, { align: "right" });
 
   y += 6;
@@ -219,16 +219,16 @@ export async function generateCostSheetPdf(
   const calculatedGrandTotal = calculatedBasicCost + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + elecDeposit + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration;
 
   const summaryRows: [string, string][] = [
-    ["Total Carpet Area",           `${fmt(summary.totalCarpetArea)} sq.ft`],
-    ["Basic Cost",                  `Rs. ${fmt(calculatedBasicCost)}`],
-    ["Development Charges",         `Rs. ${fmt(summary.totalDevelopment)}`],
+    ["Total Carpet Area", `${fmt(summary.totalCarpetArea)} sq.ft`],
+    ["Basic Cost", `Rs. ${fmt(calculatedBasicCost)}`],
+    ["Development Charges", `Rs. ${fmt(summary.totalDevelopment)}`],
     ["Legal & Society Formation Charges", `Rs. ${fmt(summary.totalLegal + summary.totalSocietyFormation)}`],
-    ["DG Backup",                   `Rs. ${fmt(elecDeposit)}`],
-    ["Recreational Charges",        `Rs. ${fmt(summary.totalRecreational)}`],
-    ["GST",                         `Rs. ${fmt(summary.totalGst)}`],
-    ["Stamp Duty",                  `Rs. ${fmt(summary.totalStampDuty)}`],
-    ["Registration",                `Rs. ${fmt(summary.totalRegistration)}`],
-    ["Car Parking",                 `${summary.items.length * 2} Nos. (Included)`],
+    ["DG Backup", `Rs. ${fmt(elecDeposit)}`],
+    ["Recreational Charges", `Rs. ${fmt(summary.totalRecreational)}`],
+    ["GST", `Rs. ${fmt(summary.totalGst)}`],
+    ["Stamp Duty", `Rs. ${fmt(summary.totalStampDuty)}`],
+    ["Registration", `Rs. ${fmt(summary.totalRegistration)}`],
+    ["Car Parking", `${summary.items.length * 2} Nos. (Included)`],
   ];
 
   checkPage(summaryRows.length * 8 + 24);
@@ -322,9 +322,7 @@ export async function generateCostSheetPdf(
   pdf.setFont("helvetica", "normal");
   T(C_MID);
   const disc =
-    "Disclaimer: All specifications, drawings, amenities, facilities, parameters, etc., shown in this " +
-    "document are subject to change as per approvals from the respective authorities. " +
-    "The final discretion remains with the developers. This document is for internal discussion only.";
+    "Disclaimer: This cost sheet is provided solely for preliminary information and discussion purposes. The prices, offers, payment terms, and commercial conditions mentioned herein are indicative and non-binding. Final pricing and commercial negotiations will be conducted exclusively at our site office and shall be confirmed only through the final booking application and agreement.The developer reserves the right to revise prices, offers, inventory availability, specifications, and terms without prior notice.";
   const dLines = pdf.splitTextToSize(disc, CW);
   pdf.text(dLines, ML, y);
 
