@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { SECTION_IDS, SECTION_LABELS, type SectionId } from "@/utils/scrollConfig";
-import { lenisScrollTo } from "@/hooks/useLenis";
-import { getCurrentSectionIndex } from "@/utils/scrollNavigation";
+import { getCurrentSectionIndex, scrollToSectionById } from "@/utils/scrollNavigation";
 
 export function ScrollProgress() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -44,7 +43,7 @@ export function ScrollProgress() {
             key={id}
             type="button"
             className={`scroll-progress-dot ${isActive ? "active" : ""}`}
-            onClick={() => lenisScrollTo(id)}
+            onClick={() => scrollToSectionById(id)}
             aria-label={`Scroll to ${SECTION_LABELS[id as SectionId]}`}
             aria-current={isActive ? "step" : undefined}
           >

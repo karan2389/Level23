@@ -14,13 +14,13 @@ import { MultiOfficeSummary } from "@/components/unit/MultiOfficeSummary";
 import { initScrollAnimations } from "@/animations/scroll";
 import { offices } from "@/data/units";
 import { useEnquiry } from "@/providers/EnquiryProvider";
-import { useLenis, lenisScrollTo } from "@/hooks/useLenis";
+import { scrollToSectionById } from "@/utils/scrollNavigation";
 import { ScrollProgress } from "@/components/common/ScrollProgress";
 import type { FloorGroupId } from "@/types/floor";
 import type { Office } from "@/types/unit";
 
 function scrollToId(id: string) {
-  lenisScrollTo(id);
+  scrollToSectionById(id);
 }
 
 export default function PortfolioSite() {
@@ -43,10 +43,6 @@ export default function PortfolioSite() {
   const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [multiSelectedOffices, setMultiSelectedOffices] = useState<Office[]>([]);
   const [summaryPopupOpen, setSummaryPopupOpen] = useState(false);
-
-  // Disable section-snap whenever any overlay/modal is open
-  const isModalOpen = menuOpen || officePopupOpen || summaryPopupOpen || enquiryOpen;
-  useLenis({ modalOpen: isModalOpen });
 
   useEffect(() => {
     const ctx = initScrollAnimations(root);

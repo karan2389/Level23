@@ -5,7 +5,6 @@
  * Powered by Lenis for ultra-smooth cinematic scrolling.
  */
 
-import { lenisScrollTo } from "@/hooks/useLenis";
 import { SECTION_IDS, type SectionId } from "./scrollConfig";
 
 export { SECTION_IDS };
@@ -32,22 +31,19 @@ export function getCurrentSectionIndex(): number {
   return closestIndex;
 }
 
-/** Smoothly scrolls to a section by index. */
-export function scrollToSectionByIndex(
-  index: number,
-  duration = 1.1
-): void {
+/** Smoothly scrolls to a section by index using native smooth scrolling. */
+export function scrollToSectionByIndex(index: number): void {
   const id = SECTION_IDS[index];
   if (!id) return;
-  lenisScrollTo(id, duration);
+  scrollToSectionById(id);
 }
 
-/** Smoothly scrolls to a section by its string ID. */
-export function scrollToSectionById(
-  id: string,
-  duration = 1.1
-): void {
-  lenisScrollTo(id, duration);
+/** Smoothly scrolls to a section by its string ID using native smooth scrolling. */
+export function scrollToSectionById(id: string): void {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 /** Given a section ID, returns the ID of the next section, or null if last. */
