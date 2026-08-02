@@ -309,14 +309,10 @@ export function CostSheetModal({
 
               {/* 2. LEVEL23 Logo (Center) */}
               <div className="cost-sheet-desktop-level flex flex-col items-center justify-center text-center">
-                <img
-                  src="/images/logos/level23.png"
-                  alt="Level 23"
-                  className="object-contain"
-                  style={{ height: "40px", width: "auto" }}
-                  crossOrigin="anonymous"
-                />
-                <span className="font-bold tracking-[0.2em] text-gray-600 uppercase mt-0.5" style={{ fontSize: "10px" }}>
+                <span className="font-serif font-medium text-gray-900 tracking-[0.05em] uppercase" style={{ fontSize: "20px", lineHeight: "1" }}>
+                  LEVEL 23
+                </span>
+                <span className="font-bold tracking-[0.2em] text-gray-500 uppercase mt-1" style={{ fontSize: "9px" }}>
                   PREMIUM OFFICE SPACES
                 </span>
               </div>
@@ -376,14 +372,10 @@ export function CostSheetModal({
 
               {/* Row 2: LEVEL23 Logo */}
               <div className="cost-sheet-mobile-level flex flex-col items-center justify-center text-center w-full">
-                <img
-                  src="/images/logos/level23.png"
-                  alt="Level 23"
-                  className="object-contain"
-                  style={{ width: "clamp(150px, 48vw, 210px)", height: "auto", maxHeight: "52px" }}
-                  crossOrigin="anonymous"
-                />
-                <span className="font-bold tracking-[0.2em] text-gray-600 uppercase mt-0.5" style={{ fontSize: "9px" }}>
+                <span className="font-serif font-medium text-gray-900 tracking-[0.05em] uppercase" style={{ fontSize: "18px", lineHeight: "1" }}>
+                  LEVEL 23
+                </span>
+                <span className="font-bold tracking-[0.2em] text-gray-500 uppercase mt-0.5" style={{ fontSize: "8px" }}>
                   PREMIUM OFFICE SPACES
                 </span>
               </div>

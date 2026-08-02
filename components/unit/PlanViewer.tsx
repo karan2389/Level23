@@ -80,7 +80,7 @@ export function PlanViewer({
           </div>
         )}
 
-        <div className={`floor-plan-card reveal ${activePlan === "offices" ? "typical-active" : ""}`}>
+        <div className={`floor-plan-card reveal ${activePlan === "offices" ? "typical-active" : ""} ${multiSelectMode ? "multi-select-active" : ""}`}>
           {activePlan === "offices" ? (
             <PanZoomViewport key="offices" className="typical-plan-panzoom" ariaLabel="Typical office floor plan. Drag to pan and pinch to zoom.">
               <div className="interactive-plan-canvas">
@@ -131,7 +131,7 @@ export function PlanViewer({
           )}
           {/* Relocated action bar directly beneath the floor plan viewport, inside the card */}
           {multiSelectMode && activePlan === "offices" && (
-            <div className="multi-select-toolbar-relocated" role="toolbar" aria-label="Multi-office selection controls">
+            <div className={`multi-select-toolbar-relocated ${multiSelectedOffices.length > 0 ? "visible" : ""}`} role="toolbar" aria-label="Multi-office selection controls">
               <div className="multi-select-toolbar-count">
                 <Layers size={20} aria-hidden="true" />
                 <span>

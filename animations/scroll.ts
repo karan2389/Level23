@@ -74,7 +74,7 @@ export function initScrollAnimations(rootElement: React.RefObject<HTMLElement | 
           filter: "blur(0px)",
           opacity: 1,
           ease: "none",
-          scrollTrigger: { trigger: section, start: "top 96%", end: "top 55%", scrub: true },
+          scrollTrigger: { trigger: section, start: "top 100%", end: "top 72%", scrub: true },
         }
       );
     });
