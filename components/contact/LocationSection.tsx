@@ -45,18 +45,14 @@ export function LocationSection({ onNotice }: { onNotice: () => void }) {
 
       <section id="contact" className="contact-section section-screen">
         <div className="section-inner contact-inner">
-          <div className="project-features reveal">
-            <article><ShoppingBag /><strong>Retail Podium</strong><span>Ground floor</span></article>
-            <article><Building2 /><strong>Typical Offices</strong><span>Levels 7-22</span></article>
-            <article><Trees /><strong>Premium Terraces</strong><span>Level 23</span></article>
-          </div>
+
 
           <div className="connect-block reveal">
             <span>Let&apos;s Connect</span>
             <h2>Speak to our experts.</h2>
             <div className="pending-contact-row">
-              <a href="tel:+917353031888" className="contact-link"><Phone /> +91 73530 31888</a>
-              <a href="mailto:info@level23.co.in" className="contact-link"><Mail /> info@level23.co.in</a>
+              <a href="tel:+919769239230" className="contact-link"><Phone /> +91 97692 39230</a>
+              <a href="mailto:aksharbhagwativenturesllp@gmail.com" className="contact-link"><Mail /> aksharbhagwativenturesllp@gmail.com</a>
               <a href="https://www.level23.co.in" target="_blank" rel="noreferrer" className="contact-link"><Globe2 /> www.level23.co.in</a>
             </div>
             <button className="accent-button schedule-button" type="button" onClick={onNotice}><CalendarDays /> Schedule Site Visit <ArrowRight /></button>
@@ -80,8 +76,8 @@ export function LocationSection({ onNotice }: { onNotice: () => void }) {
               </div>
 
               <div className="project-footer-links">
-                <a href="tel:+917353031888"><Phone size={17} /> 73530 31888</a>
-                <a href="mailto:info@level23.co.in"><Mail size={17} /> info@level23.co.in</a>
+                <a href="tel:+919769239230"><Phone size={17} /> 97692 39230</a>
+                <a href="mailto:aksharbhagwativenturesllp@gmail.com"><Mail size={17} /> aksharbhagwativenturesllp@gmail.com</a>
                 <a href="https://www.level23.co.in" target="_blank" rel="noreferrer"><Globe2 size={17} /> www.level23.co.in</a>
               </div>
             </div>

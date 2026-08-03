@@ -2683,7 +2683,7 @@ body::after {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background: #1c1815;
+    background: #000000;
     color: #f3efe9;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   }

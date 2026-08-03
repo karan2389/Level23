@@ -182,9 +182,9 @@ export function MainPageNavigation({ disabled = false }: { disabled?: boolean })
           onClick={() => goToRelativePage(-1)}
           aria-label="Go to previous page"
         >
-          <span>Swipe Down</span>
+          <span></span>
           <span className="main-page-navigation__circle"><ChevronUp size={20} /></span>
-          <small>Go Up</small>
+          <small></small>
         </button>
       )}
 
