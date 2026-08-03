@@ -162,11 +162,12 @@ export async function generateCostSheetPdf(
   sectionHead("Cost Sheet");
 
   // Column widths (must total CW = 178mm)
-  // Unit | Carpet Area
-  const CW0 = 42, CW1 = CW - CW0;
+  const CW0 = 25, CW1 = 45, CW2 = 54, CW3 = CW - CW0 - CW1 - CW2;
   const X0 = ML;
-  const X1 = ML + CW0;
-  const HDRS = ["Unit", "Carpet Area"];
+  const X1 = X0 + CW0;
+  const X2 = X1 + CW1;
+  const X3 = X2 + CW2;
+  const HDRS = ["Unit", "Carpet Area", "Floor Rise", "Basic Cost"];
   const TH_H = 9;
   const ROW_H = 9;
   const PAD = 3;
@@ -179,6 +180,8 @@ export async function generateCostSheetPdf(
   T(C_DARK);
   pdf.text(HDRS[0], X0 + PAD, y + 6);
   pdf.text(HDRS[1], X1 + CW1 - PAD, y + 6, { align: "right" });
+  pdf.text(HDRS[2], X2 + CW2 - PAD, y + 6, { align: "right" });
+  pdf.text(HDRS[3], X3 + CW3 - PAD, y + 6, { align: "right" });
 
   y += TH_H;
 
@@ -205,6 +208,8 @@ export async function generateCostSheetPdf(
     pdf.setFont("helvetica", "normal");
     T(C_DARK);
     pdf.text(`${fmt(item.carpetArea)} sq.ft`, X1 + CW1 - PAD, cy, { align: "right" });
+    pdf.text(`Rs. ${fmt(item.floorRise)}`, X2 + CW2 - PAD, cy, { align: "right" });
+    pdf.text(`Rs. ${fmt(item.basicCost + item.floorRise)}`, X3 + CW3 - PAD, cy, { align: "right" });
 
     y += ROW_H;
   });
@@ -215,20 +220,21 @@ export async function generateCostSheetPdf(
 
   // ════════════════════════════════════════════════════════════════════════
   // 3. SUMMARY
-  const calculatedBasicCost = summary.totalBasicCost + summary.totalFloorRise;
   const elecDeposit = summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000;
-  const calculatedGrandTotal = calculatedBasicCost + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + elecDeposit + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration;
+  const calculatedGrandTotal = summary.totalBasicCost + summary.totalFloorRise + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + elecDeposit + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration + summary.totalOtherCharges;
 
   const summaryRows: [string, string][] = [
     ["Total Carpet Area", `${fmt(summary.totalCarpetArea)} sq.ft`],
-    ["Basic Cost", `Rs. ${fmt(calculatedBasicCost)}`],
+    ["Basic Cost", `Rs. ${fmt(summary.totalBasicCost + summary.totalFloorRise)}`],
     ["Development Charges", `Rs. ${fmt(summary.totalDevelopment)}`],
     ["Legal & Society Formation Charges", `Rs. ${fmt(summary.totalLegal + summary.totalSocietyFormation)}`],
     ["DG Backup", `Rs. ${fmt(elecDeposit)}`],
     ["Recreational Charges", `Rs. ${fmt(summary.totalRecreational)}`],
+    ["Parking Charges", `Rs. ${fmt(summary.totalOtherCharges)}`],
     ["GST (12%)", `Rs. ${fmt(summary.totalGst)}`],
     ["Stamp Duty (6%)", `Rs. ${fmt(summary.totalStampDuty)}`],
     ["Registration", `Rs. ${fmt(summary.totalRegistration)}`],
+
     ["Car Parking", `${summary.items.length} Nos. (Included)`],
   ];
 

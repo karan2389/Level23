@@ -422,6 +422,9 @@ export function CostSheetModal({
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.18)", color: "#111111", fontWeight: 800 }}>
                     <th style={{ padding: "0.85rem 0.65rem" }}>Unit No</th>
                     <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Carpet Area</th>
+                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Floor Rise</th>
+                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Basic Cost</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -429,6 +432,9 @@ export function CostSheetModal({
                     <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", color: "#050505" }}>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 800 }}>{formatUnitNumber(item.floor || selectedFloorNumber, item.officeId)}</td>
                       <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
+                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>₹{formatNumberIN(item.floorRise)}</td>
+                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>₹{formatNumberIN(item.basicCost + item.floorRise)}</td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -483,6 +489,8 @@ export function CostSheetModal({
                 <span style={{ fontWeight: 700 }}>Recreational Charges</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRecreational)}</strong>
 
+                <span style={{ fontWeight: 700 }}>Parking Charges</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalOtherCharges)}</strong>
                 <span style={{ fontWeight: 700 }}>GST (12%)</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalGst)}</strong>
 
@@ -491,11 +499,12 @@ export function CostSheetModal({
 
                 <span style={{ fontWeight: 700 }}>Registration</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRegistration)}</strong>
+
               </div>
 
               <div style={{ borderTop: "1px dashed rgba(0,0,0,0.22)", marginTop: "0.85rem", paddingTop: "0.85rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem" }}>
                 <span style={{ color: "#8a551c", fontSize: "0.86rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>Grand Total</span>
-                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN((summary.totalBasicCost + summary.totalFloorRise) + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + (summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000) + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration)}</strong>
+                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(summary.totalBasicCost + summary.totalFloorRise + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + (summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000) + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration + summary.totalOtherCharges)}</strong>
               </div>
             </div>
 
