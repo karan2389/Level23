@@ -1,158 +1,148 @@
-# Level23 Update 02 - Cosmetic Refresh
+# Level23 Update 03 - Mobile Page Navigation and Floor Plan UI
 
-This is an **update-only patch**, not a full project. Apply it to the latest Level23 codebase that already contains the updated typical-floor image and accurate office selection grids.
+## Baseline
 
-## 🚫 Do Not Modify
+Apply this patch only to the latest complete `Level23-main` project supplied on 2 August 2026. This package contains update-only replacement files. It is not a complete project.
 
-The following folders/files are outside the scope of this patch and must not be edited:
+## Safe application procedure
 
-- data/
-- providers/
-- utils/
-- constants/
-- components/unit/
-- components/building/
-
-Do not:
-- refactor
-- rename files
-- change imports
-- update dependencies
-- change routing
-- regenerate components
-- modify business logic
-- alter state management
-
-## Scope
-
-This patch changes presentation only:
-
-- Rebuilds the first hero screen to follow the supplied mobile mockup.
-- Uses the supplied daytime Level23 building render as the hero image.
-- Adds Akshar, Bhagwati and Level23 branding to the transparent navbar.
-- Replaces the warm orange/cream interface with a blue-glass, silver, mist and warm-sunrise palette derived from the supplied building render.
-- Adds a soft blurred building/gradient atmosphere behind the site sections.
-- Adds the full sales-office, phone, email, website, MahaRERA and disclaimer information to the bottom of the final page.
-- Does **not** add the QR code.
-
-## Important functional constraint
-
-Do not modify or regenerate the existing project logic. The following must remain exactly as they currently work:
-
-- 3D building interaction
-- floor-range switching
-- floor-plan zoom, drag, pinch and reset
-- all office hotspots and hotspot coordinates
-- single-office popup
-- multiple-office selection
-- cost sheet
-- enquiry workflow
-- Google Sheet pricing integration
-
-No files inside `data/`, `providers/`, `utils/`, `components/unit/`, `components/building/`, or `constants/` are part of this update.
-
-## Installation procedure
-
-1. Create a backup or a new Git branch before applying the update.
-2. Open the `patch` folder in this package.
-3. Copy everything inside `patch/` into the Level23 project root.
-4. Preserve the folder structure exactly.
-5. Allow these files to be replaced:
-   - `app/globals.css`
-   - `app/layout.tsx`
-   - `components/common/Header.tsx`
-   - `components/hero/HeroSection.tsx`
-   - `components/contact/LocationSection.tsx`
-   - `public/images/logos/akshar.png`
-   - `public/images/logos/bhagwati.png`
-   - `public/images/logos/level23.png`
-6. Add the new files:
-   - `public/images/building/level23-hero-main.jpeg`
-   - `public/images/logos/akshar-footer-original.png`
-   - `public/images/logos/bhagwati-footer-original.png`
-7. Run:
+1. Make a backup or create a new Git branch.
+2. Open the current Level23 project root.
+3. Copy everything inside `changed-files/` into the project root.
+4. Preserve the folder paths exactly.
+5. Replace only files that already exist.
+6. Add the new file:
+   `components/common/MainPageNavigation.tsx`
+7. Do not delete, move, rename or rewrite any other file.
+8. Run:
 
 ```bash
-npm install
+npm ci
 npm run build
-npm run dev
 ```
 
-8. Verify the checklist below before committing.
+The same changes are also provided in `CODE-REVIEW-DIFF.patch` for review. The replacement files are the preferred Antigravity workflow.
 
-## Visual result expected
+## Required changes included
 
-### Transparent navbar
+### Correct office facing
 
-- Akshar and Bhagwati appear together on the left with a thin divider.
-- The footer uses cropped copies of the exact supplied black-background logo masters; only empty outer margins were removed.
-- Level23 appears in the centre.
-- The menu icon remains on the right.
-- The navbar remains transparent with a very light blur, not a solid block.
+- Offices 01-05: City Facing
+- Offices 06-21: Sea Facing
+- Offices 22-26: City Facing
 
-### Hero
+The internal office data and the displayed facing helper have both been corrected. Existing overlay layout and scrolling remain unchanged.
 
-- The supplied daytime building render fills the first screen.
-- Level23 branding, the heading `Beyond Premium Offices`, supporting copy and `Explore Spaces` button sit on the left.
-- A dark bottom fade keeps the swipe-up instruction readable.
-- Mobile cropping keeps the tower prominent while retaining readable left-side copy.
+### Remove the temporary text-based Level 23 mark
 
-### Site palette
+The minimalist tower-glyph `LEVEL 23` mark has been removed from all main pages. The navigation menu now uses the supplied original Level23 logo image instead.
 
-- Main colors: glass blue, silver, slate navy, mist white and restrained warm copper.
-- Existing cards become translucent blue-glass cards.
-- A blurred version of the building render creates subtle depth behind subsequent sections.
-- The refresh must not reduce plan readability or hotspot visibility.
+### Floor-plan heading instruction
 
-### Final-page footer
+The Floor Plan heading now includes:
 
-Add these details without a QR code:
+> Choose a floor plan, then tap an office to view its details.
 
-- **Sales Office Address:** Next to Abbott Hotel, Plot No. 22, 23, 32 & 33, Sector - 2, Vashi, Navi Mumbai - 400 703
-- **Phone:** 73530 31888
-- **Email:** info@level23.co.in
-- **Website:** www.level23.co.in
-- **MahaRERA Reg. No.:** P51700053764
-- **MahaRERA website:** https://maharera.mahaonline.gov.in
-- **Disclaimer:** All specifications, drawing, amenities, facilities, parameters, etc., shown in this brochure are subject to change as per the approval from the respective authorities. The final discretion remains with the developers.
+### Compact 3D explorer on mobile
 
-## Verification checklist
+The building model and all six floor-range buttons are designed to fit in one mobile viewport. Buttons are smaller without changing their selection behavior.
 
-- [ ] Hero loads the new `level23-hero-main.jpeg` asset.
-- [ ] Hero copy is readable at 360 px, 390 px, 768 px and desktop widths.
-- [ ] Header logos do not overlap the menu.
-- [ ] Header stays transparent.
-- [ ] Level23 logo is visible in the centre of the navbar.
-- [ ] Floor-plan image is unchanged.
-- [ ] All 26 typical-office hotspots still align and select correctly.
-- [ ] Floor switching still works.
-- [ ] Single and multiple office selection still work.
-- [ ] Cost sheet and enquiry modal still open.
-- [ ] Footer displays all supplied information.
-- [ ] No QR code appears anywhere in the new footer.
-- [ ] `npm run build` succeeds before deployment.
+Parking is corrected from `2-4` to `2-5`.
 
-## Files included
+### Floor-plan toolbar
 
-```text
-patch/
-├── app/
-│   ├── globals.css
-│   └── layout.tsx
-├── components/
-│   ├── common/Header.tsx
-│   ├── contact/LocationSection.tsx
-│   └── hero/HeroSection.tsx
-└── public/images/
-    ├── building/level23-hero-main.jpeg
-    └── logos/
-        ├── akshar.png
-        ├── akshar-footer-original.png
-        ├── bhagwati.png
-        ├── bhagwati-footer-original.png
-        └── level23.png
-```
+- Removed the full-screen/reset icon with two diagonal arrows.
+- Kept zoom-in and zoom-out.
+- Moved the plan instruction above the plan and into the same row as the zoom controls.
+- Kept drag, pinch, wheel zoom and double-tap reset behavior.
 
-## Build-validation note
+### Six mobile main pages
 
-The TypeScript files were syntax-checked. A complete dependency installation and Next.js build could not be performed in the packaging environment because its internal npm mirror returned a 404 for `zustand@5.0.14`. The developer must run the normal project build after applying the patch.
+Mobile main-page order:
+
+1. Hero
+2. 3D Building Explorer
+3. Floor Plan
+4. Interiors
+5. Location
+6. Contact and legal footer
+
+The previous combined Location/Contact section has only been split into two main screen sections. Its content, links, logos and legal text are preserved.
+
+### Page-by-page mobile navigation
+
+On screens up to 900 px wide:
+
+- Free scrolling between main sections is replaced by one-page navigation.
+- One upward swipe moves directly to the next page.
+- One downward swipe moves directly to the previous page.
+- The bottom control reads `Swipe Up / Go Down`.
+- The top control reads `Swipe Down / Go Up`.
+- Both controls are clickable.
+- The hero only shows the next-page control.
+- The final Contact page only shows the previous-page control.
+
+Interactive areas are excluded from page gestures so these continue working:
+
+- 3D building rotation and zoom
+- Floor-plan pan and zoom
+- Buttons, links, dropdowns and forms
+- Navigation menu
+- Office details overlay
+- Multiple-office summary overlay
+- Enquiry and cost-sheet overlays
+
+Overlay pages continue to use their existing internal free scrolling.
+
+### Header and progress control
+
+- Header remains fixed and visible across all six main pages.
+- A stronger top-to-transparent gradient has been added.
+- The right-side vertical progress-dot control has been removed from the rendered site.
+
+## Files intentionally not changed
+
+Do not modify these systems while applying this patch:
+
+- Office hotspot coordinates
+- Floor-plan images or other public assets
+- Office single-selection behavior
+- Multiple-office selection logic
+- Pricing and Google Sheet integration
+- Cost calculations and cost-sheet PDF generation
+- Enquiry API or form logic
+- 3D model geometry and materials
+- Overlay layout or overlay scrolling
+- Netlify configuration
+- Dependencies or package versions
+
+## Mobile verification checklist
+
+Test at least these viewport sizes:
+
+- 360 x 640
+- 390 x 844
+- 412 x 915
+
+Confirm:
+
+1. Exactly six main screen sections are reachable.
+2. Each swipe changes only one page.
+3. Swipe down returns to the previous page.
+4. Header remains visible.
+5. No right-side progress dots appear.
+6. The model and six floor buttons fit on the Explorer page.
+7. Parking reads `2-5`.
+8. The Floor Plan page shows the new heading instruction.
+9. The plan instruction and zoom controls are on one row.
+10. No full-screen/two-arrow plan control appears.
+11. Plan pinch, drag, wheel zoom and office hotspots still work.
+12. Office facing matches the required ranges.
+13. Office, multiple-office, enquiry and cost-sheet overlays retain free scrolling.
+14. Location content is on Page 5 and the complete contact/footer content is on Page 6.
+
+## Validation performed before packaging
+
+- TypeScript syntax transpile check passed for all 15 modified/new TypeScript files.
+- CSS opening/closing brace and parenthesis counts match.
+- A full Next.js build could not be run in the packaging environment because its internal npm mirror returns a 404 for `zustand@5.0.14`. Run the normal build in the developer environment after applying the files.

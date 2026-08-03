@@ -1,6 +1,6 @@
 "use client";
 
-import { Maximize2, Minus, Plus } from "lucide-react";
+import { Layers, Minus, Plus } from "lucide-react";
 import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -26,6 +26,7 @@ type PanZoomViewportProps = {
   minScale?: number;
   maxScale?: number;
   ariaLabel?: string;
+  toolbarHint?: string;
 };
 
 const clamp = (value: number, minimum: number, maximum: number) => Math.min(maximum, Math.max(minimum, value));
@@ -39,6 +40,7 @@ export default function PanZoomViewport({
   minScale = 1,
   maxScale = 4,
   ariaLabel = "Interactive zoomable plan",
+  toolbarHint = "Pinch to zoom and drag to pan.",
 }: PanZoomViewportProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -213,11 +215,16 @@ export default function PanZoomViewport({
 
   return (
     <div className={`panzoom-shell ${className}`}>
-      <div className="plan-toolbar" aria-label="Plan zoom controls">
-        <button type="button" onClick={() => zoomAt(transformRef.current.scale * 1.2)} aria-label="Zoom in"><Plus /></button>
-        <span>{Math.round(transform.scale * 100)}%</span>
-        <button type="button" onClick={() => zoomAt(transformRef.current.scale / 1.2)} aria-label="Zoom out"><Minus /></button>
-        <button type="button" onClick={reset} aria-label="Reset zoom and position"><Maximize2 /></button>
+      <div className="plan-control-row">
+        <div className="plan-toolbar-hint">
+          <Layers size={18} aria-hidden="true" />
+          <span>{toolbarHint}</span>
+        </div>
+        <div className="plan-toolbar" aria-label="Plan zoom controls">
+          <button type="button" onClick={() => zoomAt(transformRef.current.scale * 1.2)} aria-label="Zoom in"><Plus /></button>
+          <span>{Math.round(transform.scale * 100)}%</span>
+          <button type="button" onClick={() => zoomAt(transformRef.current.scale / 1.2)} aria-label="Zoom out"><Minus /></button>
+        </div>
       </div>
       <div
         ref={viewportRef}
@@ -238,7 +245,6 @@ export default function PanZoomViewport({
           {children}
         </div>
       </div>
-      <div className="panzoom-hint">Drag to pan · pinch or scroll to zoom · double-tap to reset</div>
     </div>
   );
 }

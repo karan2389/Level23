@@ -72,7 +72,7 @@ export function UnitPanel({
           </div>
           <div className="summary-card-row" style={{ display: "flex", justifyContent: "space-between" }}>
             <span className="summary-card-label" style={{ color: "var(--muted)", fontSize: "0.9rem" }}>Wing</span>
-            <span className="summary-card-value" style={{ fontWeight: "500" }}>{selectedOffice.facing === "Window-facing" ? "North wing" : "South wing"}</span>
+            <span className="summary-card-value" style={{ fontWeight: "500" }}>{selectedOffice.facing === "Sea-facing" ? "North wing" : "South wing"}</span>
           </div>
         </div>
 
@@ -122,7 +122,7 @@ export function UnitPanel({
           <article><Maximize2 /><div><small>Carpet Area</small><strong>{selectedOffice.carpetArea}</strong></div></article>
           <article><Route /><div><small>Facing</small><strong>{getOfficeFacing(selectedOffice.id)}</strong></div></article>
           <article><Building2 /><div><small>Dimensions</small><strong>{selectedOffice.dimensions}</strong></div></article>
-          <article><Info /><div><small>Compass</small><strong>{selectedOffice.facing === "Window-facing" ? "North wing" : "South wing"}</strong></div></article>
+          <article><Info /><div><small>Compass</small><strong>{selectedOffice.facing === "Sea-facing" ? "North wing" : "South wing"}</strong></div></article>
         </div>
       </div>
 

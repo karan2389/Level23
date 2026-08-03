@@ -14,6 +14,7 @@ export const SECTION_IDS = [
   "floor-plan",
   "interiors",
   "location",
+  "contact",
 ] as const;
 
 export type SectionId = (typeof SECTION_IDS)[number];
@@ -25,6 +26,7 @@ export const SECTION_LABELS: Record<SectionId, string> = {
   "floor-plan": "Floor Plans",
   interiors: "Interiors",
   location: "Location",
+  contact: "Contact",
 };
 
 /** Reveal animation defaults */

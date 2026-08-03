@@ -15,7 +15,7 @@ import { initScrollAnimations } from "@/animations/scroll";
 import { offices } from "@/data/units";
 import { useEnquiry } from "@/providers/EnquiryProvider";
 import { scrollToSectionById } from "@/utils/scrollNavigation";
-import { ScrollProgress } from "@/components/common/ScrollProgress";
+import { MainPageNavigation } from "@/components/common/MainPageNavigation";
 import type { FloorGroupId } from "@/types/floor";
 import type { Office } from "@/types/unit";
 
@@ -177,7 +177,9 @@ export default function PortfolioSite() {
         </div>
       )}
 
-      <ScrollProgress />
+      <MainPageNavigation
+        disabled={menuOpen || officePopupOpen || summaryPopupOpen || enquiryOpen || multiSelectMode}
+      />
     </main>
   );
 }

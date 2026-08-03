@@ -2094,3 +2094,744 @@ body::after {
     transform: translateX(0);
   }
 }
+
+/* ========================================================================== 
+   Update 03 - mobile page navigation, compact explorer and floor-plan controls
+   ========================================================================== */
+
+/* Keep the main navigation visible with a stronger top fade. */
+.site-header {
+  z-index: 90;
+  background: linear-gradient(
+    180deg,
+    rgba(238, 243, 246, 0.98) 0%,
+    rgba(238, 243, 246, 0.88) 42%,
+    rgba(238, 243, 246, 0.45) 72%,
+    rgba(238, 243, 246, 0) 100%
+  );
+}
+
+/* Original Level 23 artwork is used in the navigation menu. */
+.nav-panel-brand-image {
+  width: min(230px, 62vw);
+  transform: none;
+}
+.nav-panel-brand-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.contact-section {
+  background: linear-gradient(180deg, #e7edf1, #dfe7ed);
+}
+
+/* Instruction and zoom controls now share the same row above the plan. */
+.plan-heading-copy {
+  min-width: 0;
+}
+.plan-heading-copy p {
+  max-width: 620px;
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.panzoom-shell {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.plan-control-row {
+  position: relative;
+  z-index: 8;
+  flex: 0 0 auto;
+  min-height: 50px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.plan-toolbar-hint {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.plan-toolbar-hint svg {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+.panzoom-shell .plan-toolbar,
+.plan-toolbar {
+  position: static;
+  flex: 0 0 auto;
+  margin-left: auto;
+  transform: none;
+  transform-origin: center;
+}
+.panzoom-viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Fixed page-up/page-down guidance for the six main mobile pages. */
+.main-page-navigation {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+}
+.main-page-navigation__control {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 0;
+  padding: 0;
+  color: #17364d;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-shadow: 0 1px 9px rgba(255,255,255,0.9);
+}
+.main-page-navigation__control--up {
+  top: calc(88px + env(safe-area-inset-top, 0px));
+}
+.main-page-navigation__control--down {
+  bottom: max(14px, env(safe-area-inset-bottom, 14px));
+}
+.main-page-navigation__control > span:first-child,
+.main-page-navigation__control small {
+  font-size: 0.55rem;
+  line-height: 1.1;
+}
+.main-page-navigation__circle {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(67,90,115,0.34);
+  border-radius: 50%;
+  color: var(--accent);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(31,59,78,0.14);
+}
+.main-page-navigation__control--down .main-page-navigation__circle {
+  animation: pageNavigationDown 1.8s ease-in-out infinite;
+}
+.main-page-navigation__control--up .main-page-navigation__circle {
+  animation: pageNavigationUp 1.8s ease-in-out infinite;
+}
+@keyframes pageNavigationDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+@keyframes pageNavigationUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (max-width: 900px) {
+  html.main-page-snap-enabled,
+  body.main-page-snap-enabled {
+    height: 100%;
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: none;
+  }
+
+  body.main-page-snap-enabled main {
+    overflow: visible;
+  }
+
+  body.main-page-snap-enabled .section-screen {
+    width: 100%;
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* Page 2: building and all six compact floor selectors fit together. */
+  .explorer-inner {
+    height: 100%;
+    padding: 88px 12px 68px;
+    display: flex;
+    flex-direction: column;
+  }
+  .explorer-inner .section-title {
+    flex: 0 0 auto;
+    margin: 0 0 2px;
+  }
+  .explorer-inner .section-title h4 {
+    margin: 0;
+    font-size: clamp(1rem, 4.5vw, 1.25rem);
+    line-height: 1.2;
+  }
+  .model-stage {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+  }
+  .model-arrow {
+    width: 42px;
+    height: 42px;
+  }
+  .model-arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+  .model-hint {
+    bottom: 0;
+    font-size: 0.68rem;
+  }
+  .model-hint svg {
+    width: 23px;
+    height: 23px;
+  }
+  .floor-picker {
+    flex: 0 0 auto;
+    margin-top: 2px;
+  }
+  .floor-picker > span {
+    font-size: 0.63rem;
+    letter-spacing: 0.26em;
+  }
+  .floor-pills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 7px;
+    max-width: 560px;
+  }
+  .floor-pills-grid button,
+  .floor-pills-grid button:nth-child(5),
+  .floor-pills-grid button:nth-child(6) {
+    grid-column: auto;
+    min-height: clamp(45px, 7svh, 56px);
+    padding: 4px 7px;
+    border-radius: 16px;
+    gap: 1px;
+  }
+  .floor-pills-grid button strong {
+    font-size: 1.02rem;
+  }
+  .floor-pills-grid button small {
+    font-size: 0.69rem;
+  }
+
+  /* Page 3: heading, selector, instruction, zoom controls and plan stay in-view. */
+  .plan-inner {
+    height: 100%;
+    padding: 88px 10px 66px;
+    display: flex;
+    flex-direction: column;
+  }
+  .plan-heading {
+    flex: 0 0 auto;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 5px 9px;
+    margin: 0 0 8px;
+  }
+  .plan-heading > button {
+    width: 38px;
+    height: 38px;
+  }
+  .plan-heading > button svg {
+    width: 22px;
+  }
+  .plan-heading h2 {
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    line-height: 1;
+  }
+  .plan-heading-copy p {
+    margin-top: 4px;
+    font-size: 0.67rem;
+    line-height: 1.3;
+  }
+  .plan-heading label {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    border-radius: 14px;
+    padding-inline: 14px;
+  }
+  .plan-heading select {
+    font-size: 0.74rem;
+  }
+  .multi-select-banner {
+    flex: 0 0 auto;
+    margin: 0 0 7px;
+    padding: 8px 10px;
+    font-size: 0.68rem;
+  }
+  .floor-plan-card {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 9px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+  }
+  .floor-plan-card.multi-select-active {
+    padding-bottom: 9px;
+  }
+  .panzoom-shell {
+    flex: 1 1 auto;
+  }
+  .plan-control-row {
+    min-height: 38px;
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+  .plan-toolbar-hint {
+    gap: 5px;
+    font-size: 0.58rem;
+    line-height: 1.25;
+  }
+  .plan-toolbar-hint svg {
+    width: 15px;
+    height: 15px;
+  }
+  .panzoom-shell .plan-toolbar,
+  .plan-toolbar {
+    padding: 2px;
+  }
+  .plan-toolbar button {
+    width: 31px;
+    height: 31px;
+  }
+  .plan-toolbar button svg {
+    width: 19px;
+    height: 19px;
+  }
+  .plan-toolbar span {
+    min-width: 37px;
+    font-size: 0.58rem;
+  }
+  .panzoom-viewport {
+    height: auto;
+    min-height: 0 !important;
+    border-radius: 13px;
+  }
+  .plan-legend {
+    flex: 0 0 auto;
+    gap: 9px;
+    padding-top: 6px;
+    font-size: 0.57rem;
+  }
+  .plan-legend span {
+    gap: 4px;
+  }
+  .plan-legend i {
+    width: 11px;
+    height: 11px;
+  }
+
+  /* Page 4: interior title and gallery use the available viewport only. */
+  .interiors-page .section-inner {
+    height: 100%;
+    padding: 135px 12px 110px;
+    display: flex;
+  }
+  .interiors-page .interiors-section {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .interiors-page .section-title.compact {
+    flex: 0 0 auto;
+    margin: 0 0 8px;
+  }
+  .interiors-page .section-title.compact > span {
+    font-size: 0.61rem;
+  }
+  .interiors-page .section-title.compact h2 {
+    margin-top: 5px;
+    font-size: clamp(1.7rem, 8vw, 2.25rem);
+  }
+  .interiors-page .section-title.compact p {
+    margin-top: 5px;
+    font-size: 0.7rem;
+    line-height: 1.35;
+  }
+  .interior-slider {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    gap: 7px;
+  }
+  .interior-slider > button {
+    position: static;
+    transform: none;
+    width: 38px;
+    height: 38px;
+  }
+  .interior-slider > button svg {
+    width: 20px;
+  }
+  .interior-image {
+    height: 100%;
+    min-height: 0;
+    border-radius: 18px;
+  }
+  .interior-image img {
+    object-fit: contain !important;
+  }
+  .slider-dots {
+    flex: 0 0 auto;
+    margin-top: 8px;
+  }
+
+  /* Page 5: location and address. */
+  .location-inner {
+    height: 100%;
+    padding: 135px 12px 110px;
+    display: flex;
+    flex-direction: column;
+  }
+  .location-inner .section-title {
+    flex: 0 0 auto;
+    margin: 0 0 8px;
+  }
+  .location-inner .section-title h2 {
+    font-size: clamp(1.7rem, 8vw, 2.25rem);
+  }
+  .location-inner .section-title p {
+    margin-top: 5px;
+    font-size: 0.72rem;
+  }
+  .location-inner .map-card {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    border-radius: 18px;
+  }
+  .location-inner .map-card a {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 9px 12px;
+    font-size: 0.72rem;
+  }
+  .location-inner .address-card {
+    flex: 0 0 auto;
+    margin-top: 8px;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 16px;
+  }
+  .location-inner .address-card > span {
+    width: 42px;
+    height: 42px;
+  }
+  .location-inner .address-card > span svg {
+    width: 22px;
+    height: 22px;
+  }
+  .location-inner .address-card small {
+    font-size: 0.55rem;
+  }
+  .location-inner .address-card strong {
+    margin-top: 4px;
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  /* Page 6: project features, contact actions and complete legal footer. */
+  .contact-inner {
+    height: 100%;
+    padding: 100px 16px 100px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .contact-inner .project-features {
+    flex: 0 0 auto;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .contact-inner .project-features article {
+    min-height: 44px;
+    padding: 10px 14px;
+    gap: 10px;
+    border-radius: 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .contact-inner .project-features svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 4px;
+    color: var(--accent-dark, #8b5cf6);
+  }
+  .contact-inner .project-features strong {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-right: 6px;
+  }
+  .contact-inner .project-features span {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* 1. Contact Section (Center aligned) */
+  .contact-inner .connect-block {
+    flex: 0 0 auto;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .contact-inner .connect-block > span {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent-dark, #8b5cf6);
+  }
+  .contact-inner .connect-block h2 {
+    margin: 6px 0 14px;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+  .contact-inner .pending-contact-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  .contact-inner .pending-contact-row a.contact-link {
+    padding: 9px 14px;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--foreground);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 320px;
+  }
+  .contact-inner .pending-contact-row svg {
+    width: 16px;
+    height: 16px;
+    color: var(--accent-dark);
+  }
+
+  /* 2. Primary CTA ("Schedule Site Visit") */
+  .contact-inner .schedule-button {
+    width: 100%;
+    max-width: 340px;
+    min-height: 52px;
+    margin: 8px auto 0;
+    padding: 0 20px;
+    gap: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 28px;
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  }
+
+  /* 3. Luxury Single Footer Card */
+  .contact-inner .project-footer {
+    flex: 0 0 auto;
+    margin-top: 24px;
+    padding: 24px 18px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #1c1815;
+    color: #f3efe9;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Top Row: Builder Logos */
+  .contact-inner .project-footer-branding {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .contact-inner .project-footer-logo-card {
+    width: 42%;
+    max-width: 140px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+  .contact-inner .project-footer-logo-card img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(1.05);
+  }
+  .contact-inner .project-footer-divider {
+    height: 30px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Address & Contact Row Details */
+  .contact-inner .project-footer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+    text-align: center;
+  }
+  .contact-inner .project-footer-address {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .contact-inner .project-footer-address span {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+  }
+  .contact-inner .project-footer-address strong {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+  }
+  .contact-inner .project-footer-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 16px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  }
+  .contact-inner .project-footer-links a {
+    gap: 6px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  .contact-inner .project-footer-links svg {
+    width: 14px;
+    height: 14px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* MahaRERA & Disclaimer Block */
+  .contact-inner .project-footer-legal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+  .contact-inner .project-footer-legal a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #e2d9cf;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .contact-inner .project-footer-legal a svg {
+    width: 14px;
+    height: 14px;
+    color: #4ade80;
+  }
+  .contact-inner .project-footer-legal p {
+    font-size: 0.64rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+  }
+}
+
+@media (max-width: 430px) and (max-height: 720px) {
+  .explorer-inner {
+    padding-top: 82px;
+    padding-bottom: 58px;
+  }
+  .model-stage {
+    flex-basis: 220px;
+  }
+  .floor-pills-grid button {
+    min-height: 43px;
+  }
+  .plan-inner,
+  .interiors-page .section-inner,
+  .location-inner,
+  .contact-inner {
+    padding-top: 125px;
+    padding-bottom: 95px;
+  }
+  .contact-inner .project-footer-logo-card {
+    height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-page-navigation__circle {
+    animation: none !important;
+  }
+}

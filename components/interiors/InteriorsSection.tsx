@@ -1,18 +1,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { LevelMark } from "@/components/common/LevelMark";
 import { interiors } from "@/data/interiors";
-import { ScrollIndicator, useScrollIndicatorVisible } from "@/components/common/ScrollIndicator";
 
 export function InteriorsSection() {
   const [galleryIndex, setGalleryIndex] = useState(0);
-  const indicatorVisible = useScrollIndicatorVisible("interiors");
 
   return (
     <section id="interiors" className="interiors-page section-screen">
       <div className="section-inner">
-        <LevelMark />
         <div className="interiors-section reveal">
           <div className="section-title compact">
             <span>Indicative Workspace</span>
@@ -27,13 +23,6 @@ export function InteriorsSection() {
           <div className="slider-dots">{interiors.map((_, index) => <button key={index} type="button" className={index === galleryIndex ? "active" : ""} onClick={() => setGalleryIndex(index)} aria-label={`Show interior ${index + 1}`} />)}</div>
         </div>
       </div>
-
-      <ScrollIndicator
-        nextSectionId="location"
-        label="Scroll Down"
-        subLabel="Scroll to Explore"
-        visible={indicatorVisible}
-      />
     </section>
   );
 }

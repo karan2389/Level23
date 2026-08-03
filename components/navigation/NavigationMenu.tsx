@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
-import { 
-  Building2, 
-  Compass, 
-  Layers, 
-  Sparkles, 
-  MapPin, 
-  ArrowRight, 
-  X 
+import Image from "next/image";
+import {
+  Building2,
+  Compass,
+  Layers,
+  Sparkles,
+  MapPin,
+  Phone,
+  ArrowRight,
+  X
 } from "lucide-react";
-import { LevelMark } from "@/components/common/LevelMark";
 
-export function NavigationMenu({ 
-  onClose, 
-  scrollToId 
-}: { 
-  onClose: () => void; 
+export function NavigationMenu({
+  onClose,
+  scrollToId
+}: {
+  onClose: () => void;
   scrollToId: (id: string) => void;
 }) {
   const [isClosing, setIsClosing] = useState(false);
@@ -49,29 +50,30 @@ export function NavigationMenu({
     { id: "explorer", label: "3D Building Explorer", icon: Compass },
     { id: "floor-plan", label: "Floor Plans", icon: Layers },
     { id: "interiors", label: "Workspace Ideas", icon: Sparkles },
-    { id: "location", label: "Location & Contact", icon: MapPin },
+    { id: "location", label: "Location", icon: MapPin },
+    { id: "contact", label: "Contact", icon: Phone },
   ];
 
   return (
-    <div 
+    <div
       className={`nav-backdrop ${isClosing ? "nav-backdrop-leaving" : ""}`}
       onClick={handleClose}
       role="dialog"
       aria-modal="true"
       aria-label="Site navigation"
     >
-      <div 
+      <div
         className={`nav-panel ${isClosing ? "nav-panel-leaving" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="nav-panel-header">
-          <div className="nav-panel-brand">
-            <LevelMark />
+          <div className="nav-panel-brand nav-panel-brand-image">
+            <Image src="/images/logos/level23.png" alt="Level 23 - Premium Office Spaces" width={1533} height={381} />
           </div>
-          <button 
-            className="nav-glass-close" 
-            type="button" 
-            onClick={handleClose} 
+          <button
+            className="nav-glass-close"
+            type="button"
+            onClick={handleClose}
             aria-label="Close navigation"
           >
             <X size={20} />
@@ -82,9 +84,9 @@ export function NavigationMenu({
           {navItems.map((item, index) => {
             const Icon = item.icon;
             return (
-              <button 
-                key={item.id} 
-                type="button" 
+              <button
+                key={item.id}
+                type="button"
                 className="nav-menu-item"
                 onClick={() => handleNav(item.id)}
               >
@@ -102,7 +104,7 @@ export function NavigationMenu({
         </nav>
 
         <div className="nav-panel-footer">
-          <span>AKSHAR & BHAGWATI GROUP</span>
+          <span>AKSHAR &amp; BHAGWATI GROUP</span>
         </div>
       </div>
     </div>

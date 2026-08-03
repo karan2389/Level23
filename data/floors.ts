@@ -19,7 +19,7 @@ export const floorGroups: FloorGroup[] = [
   },
   {
     id: "parking",
-    short: "2–4",
+    short: "2–5",
     label: "Parking",
     title: "Parking Levels",
     description: "Parking layouts, driveways and robotic parking provisions.",

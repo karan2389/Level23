@@ -1,10 +1,8 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { ArrowLeft, ArrowRight, Rotate3D } from "lucide-react";
-import { LevelMark } from "@/components/common/LevelMark";
 import { floorGroups } from "@/data/floors";
 import type { FloorGroupId } from "@/types/floor";
-import { ScrollIndicator, useScrollIndicatorVisible } from "@/components/common/ScrollIndicator";
 
 const BuildingModel = dynamic(() => import("@/components/BuildingModel"), {
   ssr: false,
@@ -21,7 +19,6 @@ export function BuildingScene({
   openPlan?: () => void;
 }) {
   const [modelNudge, setModelNudge] = useState(0);
-  const indicatorVisible = useScrollIndicatorVisible("explorer");
 
   return (
     <section id="explorer" className="explorer-section section-screen">
@@ -60,13 +57,6 @@ export function BuildingScene({
           </div>
         </div>
       </div>
-
-      <ScrollIndicator
-        nextSectionId="floor-plan"
-        label="Scroll Down"
-        subLabel="Scroll to Explore"
-        visible={indicatorVisible}
-      />
     </section>
   );
 }

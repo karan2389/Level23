@@ -43,7 +43,7 @@ function buildCombinedDimensions(offices: Office[]): string {
 
 // Derive wing from facing
 function wingFromFacing(facing: string): string {
-  return facing === "Window-facing" ? "North wing" : "South wing";
+  return facing === "Sea-facing" ? "North wing" : "South wing";
 }
 
 export function MultiOfficeSummary({

@@ -44,7 +44,7 @@ const makeOfficeFromPixels = (id: number, area: number, x1: number, x2: number, 
   y: (y1 / PLAN_HEIGHT) * 100,
   w: ((x2 - x1) / PLAN_WIDTH) * 100,
   h: ((y2 - y1) / PLAN_HEIGHT) * 100,
-  facing: id <= 5 || id >= 22 ? "Road-facing" : "Window-facing",
+  facing: id <= 5 || id >= 22 ? "City-facing" : "Sea-facing",
 });
 
 const buildOfficeRow = (row: typeof officeBounds.top | typeof officeBounds.bottomLeft | typeof officeBounds.bottomRight) =>
