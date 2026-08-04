@@ -119,6 +119,17 @@ export function CostSheetModal({
     }
   };
 
+  const dgBackupAmount = summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000;
+  const subTotal =
+    summary.totalBasicCost +
+    summary.totalFloorRise +
+    summary.totalDevelopment +
+    summary.totalLegal +
+    summary.totalSocietyFormation +
+    dgBackupAmount +
+    summary.totalRecreational +
+    summary.totalOtherCharges;
+
   return (
     <OverlayLayout onClose={onClose} zIndex={130}>
       <OverlayHeader title="Cost Sheet" onBack={onClose} onClose={onClose} />
@@ -421,9 +432,7 @@ export function CostSheetModal({
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.18)", color: "#111111", fontWeight: 800 }}>
                     <th style={{ padding: "0.85rem 0.65rem" }}>Unit No</th>
-                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Carpet Area</th>
-                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Floor Rise</th>
-                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "right" }}>Basic Cost</th>
+                    <th style={{ padding: "0.85rem 0.65rem", textAlign: "center" }}>Carpet Area</th>
 
                   </tr>
                 </thead>
@@ -431,9 +440,7 @@ export function CostSheetModal({
                   {summary.items.map((item, idx) => (
                     <tr key={item.officeId} style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", color: "#050505" }}>
                       <td style={{ padding: "0.95rem 0.65rem", fontWeight: 800 }}>{formatUnitNumber(item.floor || selectedFloorNumber, item.officeId)}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
-                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>₹{formatNumberIN(item.floorRise)}</td>
-                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "right", fontWeight: 600 }}>₹{formatNumberIN(item.basicCost + item.floorRise)}</td>
+                      <td style={{ padding: "0.95rem 0.65rem", textAlign: "center", fontWeight: 600 }}>{formatNumberIN(item.carpetArea)} sq.ft</td>
 
                     </tr>
                   ))}
@@ -475,8 +482,9 @@ export function CostSheetModal({
             >
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "0.6rem 1rem", alignItems: "center", fontSize: "0.82rem", color: "#111111" }}>
                 <span style={{ fontWeight: 700 }}>Basic Cost</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalBasicCost + summary.totalFloorRise)}</strong>
-
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalBasicCost)}</strong>
+                <span style={{ fontWeight: 700 }}>Floor Rise</span>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalFloorRise)}</strong>
                 <span style={{ fontWeight: 700 }}>Development Charges</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalDevelopment)}</strong>
 
@@ -484,15 +492,19 @@ export function CostSheetModal({
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalLegal + summary.totalSocietyFormation)}</strong>
 
                 <span style={{ fontWeight: 700 }}>DG Backup </span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000)}</strong>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(dgBackupAmount)}</strong>
 
                 <span style={{ fontWeight: 700 }}>Recreational Charges</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRecreational)}</strong>
 
                 <span style={{ fontWeight: 700 }}>Parking Charges</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalOtherCharges)}</strong>
-                <span style={{ fontWeight: 700 }}>GST (12%)</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalGst)}</strong>
+
+                <span style={{ fontWeight: 800, color: "#000000", paddingTop: "0.3rem", borderTop: "1px solid rgba(0,0,0,0.12)" }}>Sub Total</span>
+                <strong style={{ fontWeight: 900, color: "#000000", paddingTop: "0.3rem", borderTop: "1px solid rgba(0,0,0,0.12)" }}>₹{formatNumberIN(subTotal)}</strong>
+
+                <span style={{ fontWeight: 700, paddingTop: "0.3rem" }}>GST (12%)</span>
+                <strong style={{ fontWeight: 900, paddingTop: "0.3rem" }}>₹{formatNumberIN(summary.totalGst)}</strong>
 
                 <span style={{ fontWeight: 700 }}>Stamp Duty (6%)</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalStampDuty)}</strong>
@@ -504,7 +516,7 @@ export function CostSheetModal({
 
               <div style={{ borderTop: "1px dashed rgba(0,0,0,0.22)", marginTop: "0.85rem", paddingTop: "0.85rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem" }}>
                 <span style={{ color: "#8a551c", fontSize: "0.86rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>Grand Total</span>
-                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(summary.totalBasicCost + summary.totalFloorRise + summary.totalDevelopment + summary.totalLegal + summary.totalSocietyFormation + (summary.totalDgBackup > 0 ? summary.totalDgBackup : 2500000) + summary.totalRecreational + summary.totalGst + summary.totalStampDuty + summary.totalRegistration + summary.totalOtherCharges)}</strong>
+                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(subTotal + summary.totalGst + summary.totalStampDuty + summary.totalRegistration)}</strong>
               </div>
             </div>
 
