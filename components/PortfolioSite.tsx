@@ -32,7 +32,7 @@ export default function PortfolioSite() {
 
   // State for Explorer & Plan
   const [selectedFloor, setSelectedFloor] = useState<FloorGroupId>("ground");
-  const [activePlan, setActivePlan] = useState<FloorGroupId>("ground");
+  const [activePlan, setActivePlan] = useState<FloorGroupId>("offices");
   
   // State for Office Selection
   const [selectedOffice, setSelectedOffice] = useState<Office>(() => offices.find((office) => office.id === 1) ?? offices[0]);
