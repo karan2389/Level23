@@ -77,7 +77,7 @@ function FloorHighlight({ selected, size }: { selected: FloorGroupId; size: THRE
         <meshBasicMaterial
           color={HIGHLIGHT_COLOR}
           transparent
-          opacity={0.19}
+          opacity={0.06}
           depthTest={false}
           depthWrite={false}
           side={THREE.DoubleSide}
@@ -91,7 +91,7 @@ function FloorHighlight({ selected, size }: { selected: FloorGroupId; size: THRE
           <meshBasicMaterial
             color={HIGHLIGHT_COLOR}
             transparent
-            opacity={0.7}
+            opacity={0.25}
             depthTest={false}
             depthWrite={false}
             toneMapped={false}
