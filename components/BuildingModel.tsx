@@ -179,7 +179,17 @@ function LoadedBuilding({ selected, nudge, paused }: { selected: FloorGroupId; n
 export default function BuildingModel({ selected, nudge }: { selected: FloorGroupId; nudge: number }) {
   const surfaceRef = useRef<HTMLDivElement>(null);
   const [interacting, setInteracting] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const endTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const pause = () => {
     if (endTimer.current) clearTimeout(endTimer.current);
@@ -211,7 +221,10 @@ export default function BuildingModel({ selected, nudge }: { selected: FloorGrou
   return (
     <div ref={surfaceRef} className="model-interaction-surface">
       <Canvas
-        camera={{ position: [17.2, 9.8, 23.4], fov: 32 }}
+        camera={{
+          position: isMobile ? [24.08, 13.72, 32.76] : [17.2, 9.8, 23.4],
+          fov: isMobile ? 36 : 32,
+        }}
         dpr={[1, 1.65]}
         gl={{ antialias: true, alpha: true }}
         style={{ touchAction: "none" }}
