@@ -31,8 +31,8 @@ export default function PortfolioSite() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // State for Explorer & Plan
-  const [selectedFloor, setSelectedFloor] = useState<FloorGroupId>("offices");
-  const [activePlan, setActivePlan] = useState<FloorGroupId>("offices");
+  const [selectedFloor, setSelectedFloor] = useState<FloorGroupId>("ground");
+  const [activePlan, setActivePlan] = useState<FloorGroupId>("ground");
   
   // State for Office Selection
   const [selectedOffice, setSelectedOffice] = useState<Office>(() => offices.find((office) => office.id === 1) ?? offices[0]);
