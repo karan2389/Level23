@@ -20,16 +20,6 @@ export function NavigationMenu({
 }) {
   const [isClosing, setIsClosing] = useState(false);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        handleClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -44,6 +34,16 @@ export function NavigationMenu({
       scrollToId(id);
     }, 200);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleClose]);
 
   const navItems = [
     { id: "hero", label: "Home", icon: Building2 },

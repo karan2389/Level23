@@ -129,6 +129,9 @@ export function CostSheetModal({
     dgBackupAmount +
     summary.totalRecreational +
     summary.totalOtherCharges;
+    
+  const trueGst = subTotal * 0.12;
+  const trueStampDuty = subTotal * 0.06;
 
   return (
     <OverlayLayout onClose={onClose} zIndex={130}>
@@ -504,10 +507,10 @@ export function CostSheetModal({
                 <strong style={{ fontWeight: 900, color: "#000000", paddingTop: "0.3rem", borderTop: "1px solid rgba(0,0,0,0.12)" }}>₹{formatNumberIN(subTotal)}</strong>
 
                 <span style={{ fontWeight: 700, paddingTop: "0.3rem" }}>GST (12%)</span>
-                <strong style={{ fontWeight: 900, paddingTop: "0.3rem" }}>₹{formatNumberIN(summary.totalGst)}</strong>
+                <strong style={{ fontWeight: 900, paddingTop: "0.3rem" }}>₹{formatNumberIN(trueGst)}</strong>
 
                 <span style={{ fontWeight: 700 }}>Stamp Duty (6%)</span>
-                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalStampDuty)}</strong>
+                <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(trueStampDuty)}</strong>
 
                 <span style={{ fontWeight: 700 }}>Registration</span>
                 <strong style={{ fontWeight: 900 }}>₹{formatNumberIN(summary.totalRegistration)}</strong>
@@ -516,7 +519,7 @@ export function CostSheetModal({
 
               <div style={{ borderTop: "1px dashed rgba(0,0,0,0.22)", marginTop: "0.85rem", paddingTop: "0.85rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem" }}>
                 <span style={{ color: "#8a551c", fontSize: "0.86rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>Grand Total</span>
-                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(subTotal + summary.totalGst + summary.totalStampDuty + summary.totalRegistration)}</strong>
+                <strong style={{ color: "#000000", fontSize: "1.45rem", lineHeight: 1, fontWeight: 950, textAlign: "right" }}>₹{formatNumberIN(subTotal + trueGst + trueStampDuty + summary.totalRegistration)}</strong>
               </div>
             </div>
 

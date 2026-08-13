@@ -226,7 +226,10 @@ export async function generateCostSheetPdf(
     elecDeposit +
     summary.totalRecreational +
     summary.totalOtherCharges;
-  const calculatedGrandTotal = subTotal + summary.totalGst + summary.totalStampDuty + summary.totalRegistration;
+    
+  const trueGst = subTotal * 0.12;
+  const trueStampDuty = subTotal * 0.06;
+  const calculatedGrandTotal = subTotal + trueGst + trueStampDuty + summary.totalRegistration;
 
   const summaryRows: [string, string][] = [
     ["Total Carpet Area", `${fmt(summary.totalCarpetArea)} sq.ft`],
@@ -238,8 +241,8 @@ export async function generateCostSheetPdf(
     ["Recreational Charges", `Rs. ${fmt(summary.totalRecreational)}`],
     ["Parking Charges", `Rs. ${fmt(summary.totalOtherCharges)}`],
     ["Sub Total", `Rs. ${fmt(subTotal)}`],
-    ["GST (12%)", `Rs. ${fmt(summary.totalGst)}`],
-    ["Stamp Duty (6%)", `Rs. ${fmt(summary.totalStampDuty)}`],
+    ["GST (12%)", `Rs. ${fmt(trueGst)}`],
+    ["Stamp Duty (6%)", `Rs. ${fmt(trueStampDuty)}`],
     ["Registration", `Rs. ${fmt(summary.totalRegistration)}`],
 
     ["Car Parking", `${summary.totalParkingVariable} Nos. (Included)`],
