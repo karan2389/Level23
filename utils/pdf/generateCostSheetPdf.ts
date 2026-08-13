@@ -242,7 +242,7 @@ export async function generateCostSheetPdf(
     ["Stamp Duty (6%)", `Rs. ${fmt(summary.totalStampDuty)}`],
     ["Registration", `Rs. ${fmt(summary.totalRegistration)}`],
 
-    ["Car Parking", `${summary.items.length} Nos. (Included)`],
+    ["Car Parking", `${summary.totalParkingVariable} Nos. (Included)`],
   ];
 
   checkPage(summaryRows.length * 8 + 24);

@@ -467,7 +467,7 @@ export function CostSheetModal({
               </div>
               <div>
                 <span style={{ display: "block", fontSize: "0.68rem", color: "#1f2933", fontWeight: 500 }}>Car Park</span>
-                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>{summary.items.length} Nos. (Included)</strong>
+                <strong style={{ display: "block", marginTop: "0.18rem", fontSize: "0.95rem", color: "#000000", fontWeight: 900 }}>{summary.totalParkingVariable} Nos. (Included)</strong>
               </div>
             </div>
 

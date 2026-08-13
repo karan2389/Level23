@@ -31,6 +31,7 @@ export function calculateCostSheet(
   const totalSocietyFormation = items.reduce((acc, item) => acc + item.societyFormation, 0);
   const totalLegal = items.reduce((acc, item) => acc + item.legal, 0);
   const totalOtherCharges = items.reduce((acc, item) => acc + item.otherCharges, 0);
+  const totalParkingVariable = items.reduce((acc, item) => acc + (item.parkingVariable ?? 1), 0);
   const totalSubtotal = items.reduce((acc, item) => acc + item.totalSubtotal, 0);
   const totalGst = items.reduce((acc, item) => acc + item.gst, 0);
   const totalStampDuty = items.reduce((acc, item) => acc + item.stampDuty, 0);
@@ -49,6 +50,7 @@ export function calculateCostSheet(
     totalSocietyFormation,
     totalLegal,
     totalOtherCharges,
+    totalParkingVariable,
     totalSubtotal,
     totalGst,
     totalStampDuty,

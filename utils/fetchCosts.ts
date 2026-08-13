@@ -22,10 +22,28 @@ export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>
 
     const costMap: Record<string, OfficeCostData> = {};
 
-    const headerRow = rows[0] ? rows[0].map((h) => h.toLowerCase().trim()) : [];
-    const carpetAreaIndex = headerRow.findIndex((h) => h.includes("carpet"));
+    let headerRowIndex = -1;
+    let headerRow: string[] = [];
 
-    for (let i = 1; i < rows.length; i++) {
+    // Search the first few rows for the actual header
+    for (let i = 0; i < Math.min(rows.length, 10); i++) {
+      const h = rows[i].map((c) => c.toLowerCase().trim());
+      if (h.includes("floor") && h.includes("unit no") && h.includes("rate")) {
+        headerRowIndex = i;
+        headerRow = h;
+        break;
+      }
+    }
+
+    if (headerRowIndex === -1) {
+      headerRow = rows[0] ? rows[0].map((h) => h.toLowerCase().trim()) : [];
+      headerRowIndex = 0;
+    }
+
+    const carpetAreaIndex = headerRow.findIndex((h) => h.includes("carpet"));
+    const parkingVarIndex = headerRow.findIndex((h) => h === "parking variable");
+
+    for (let i = headerRowIndex + 1; i < rows.length; i++) {
       const row = rows[i];
       if (row.length < 16) continue;
 
@@ -41,12 +59,25 @@ export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>
       const recreational = parseFloat(row[8]) || 0;
       const societyFormation = parseFloat(row[9]) || 0;
       const legal = parseFloat(row[10]) || 0;
-      const otherCharges = parseFloat(row[11]) || 0;
-      const totalSubtotal = parseFloat(row[12]) || 0;
-      const gst = parseFloat(row[13]) || 0;
-      const stampDuty = parseFloat(row[14]) || 0;
-      const registration = parseFloat(row[15]) || 0;
-      const grandTotal = parseFloat(row[16]) || 0;
+      const otherChargesBase = parseFloat(row[11]) || 0;
+      
+      let parkingVariable = 1;
+      if (parkingVarIndex !== -1 && row[parkingVarIndex] !== undefined) {
+        const pv = parseFloat(row[parkingVarIndex]);
+        if (!isNaN(pv)) {
+          parkingVariable = pv;
+        }
+      }
+      const otherCharges = otherChargesBase * parkingVariable;
+
+      // Handle column shift if Parking Variable was inserted after Other Charges (which is at index 11)
+      const offset = (parkingVarIndex !== -1 && parkingVarIndex <= 12) ? 1 : 0;
+
+      const totalSubtotal = parseFloat(row[12 + offset]) || 0;
+      const gst = parseFloat(row[13 + offset]) || 0;
+      const stampDuty = parseFloat(row[14 + offset]) || 0;
+      const registration = parseFloat(row[15 + offset]) || 0;
+      const grandTotal = parseFloat(row[16 + offset]) || 0;
 
       if (!isNaN(floor) && !isNaN(unitNo)) {
         const officeId = unitNo % 100;
@@ -66,6 +97,7 @@ export async function fetchLiveCostMap(): Promise<Record<string, OfficeCostData>
           societyFormation,
           legal,
           otherCharges,
+          parkingVariable,
           totalSubtotal,
           gst,
           stampDuty,

@@ -66,33 +66,49 @@ function FloorHighlight({ selected, size }: { selected: FloorGroupId; size: THRE
   const range = FLOOR_BANDS[selected];
   const bandHeight = Math.max(size.y * (range.to - range.from), size.y * 0.018);
   const bandCenterY = size.y * range.from + bandHeight / 2;
-  const edgeHeight = Math.max(size.y * 0.004, 0.22);
-  const bandWidth = size.x * 0.85;
-  const bandDepth = size.z * 0.85;
+  
+  // Make the dimensions slightly wider to sit outside the building perimeter
+  const bandWidth = size.x * 0.88;
+  const bandDepth = size.z * 0.88;
+
+  // Border edge thickness for visible thick outline
+  const T = Math.max(size.y * 0.018, 0.24);
+
+  const hw = bandWidth / 2;
+  const hh = bandHeight / 2;
+  const hd = bandDepth / 2;
+
+  // 12 edges forming the rectangular frame around the building
+  const edges: { pos: [number, number, number]; args: [number, number, number] }[] = [
+    // Top 4 horizontal edges
+    { pos: [0, hh, hd], args: [bandWidth + T, T, T] },
+    { pos: [0, hh, -hd], args: [bandWidth + T, T, T] },
+    { pos: [-hw, hh, 0], args: [T, T, bandDepth + T] },
+    { pos: [hw, hh, 0], args: [T, T, bandDepth + T] },
+
+    // Bottom 4 horizontal edges
+    { pos: [0, -hh, hd], args: [bandWidth + T, T, T] },
+    { pos: [0, -hh, -hd], args: [bandWidth + T, T, T] },
+    { pos: [-hw, -hh, 0], args: [T, T, bandDepth + T] },
+    { pos: [hw, -hh, 0], args: [T, T, bandDepth + T] },
+
+    // Vertical 4 pillar edges
+    { pos: [-hw, 0, hd], args: [T, bandHeight + T, T] },
+    { pos: [hw, 0, hd], args: [T, bandHeight + T, T] },
+    { pos: [-hw, 0, -hd], args: [T, bandHeight + T, T] },
+    { pos: [hw, 0, -hd], args: [T, bandHeight + T, T] },
+  ];
 
   return (
-    <group>
-      <mesh position={[0, bandCenterY, 0]} renderOrder={40} frustumCulled={false}>
-        <boxGeometry args={[bandWidth, bandHeight, bandDepth]} />
-        <meshBasicMaterial
-          color={HIGHLIGHT_COLOR}
-          transparent
-          opacity={0.06}
-          depthTest={false}
-          depthWrite={false}
-          side={THREE.DoubleSide}
-          toneMapped={false}
-        />
-      </mesh>
-
-      {[size.y * range.from, size.y * range.to].map((y, index) => (
-        <mesh key={`${selected}-edge-${index}`} position={[0, y, 0]} renderOrder={41} frustumCulled={false}>
-          <boxGeometry args={[bandWidth * 1.006, edgeHeight, bandDepth * 1.006]} />
+    <group position={[0, bandCenterY, 0]}>
+      {edges.map((edge, index) => (
+        <mesh key={`${selected}-frame-edge-${index}`} position={edge.pos} renderOrder={40} frustumCulled={false}>
+          <boxGeometry args={edge.args} />
           <meshBasicMaterial
             color={HIGHLIGHT_COLOR}
             transparent
-            opacity={0.25}
-            depthTest={false}
+            opacity={0.65}
+            depthTest={true}
             depthWrite={false}
             toneMapped={false}
           />

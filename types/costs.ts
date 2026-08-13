@@ -12,6 +12,7 @@ export interface OfficeCostData {
   societyFormation: number;
   legal: number;
   otherCharges: number;
+  parkingVariable?: number;
   totalSubtotal: number;
   gst: number;
   stampDuty: number;
@@ -36,6 +37,7 @@ export interface CostSheetSummary {
   totalSocietyFormation: number;
   totalLegal: number;
   totalOtherCharges: number;
+  totalParkingVariable: number;
   totalSubtotal: number; // Agreement Value
   totalGst: number;
   totalStampDuty: number;
